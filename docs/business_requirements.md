@@ -5,8 +5,12 @@ This project aims to build a batch data warehouse from CRM and ERP CSV source fi
 
 > The purpose is to centralize the source data and provide a consitent structure for analyzing business performance, customers, products, and transactions.
 
+---
+
 ## 2. Business objectives
 Centralize data from the CRM and ERP source systems, enabling analysis of sales eprformance, customer behavior, and product performance.
+
+---
 
 ## 3. Business questions
 ### Sales
@@ -28,16 +32,20 @@ Centralize data from the CRM and ERP source systems, enabling analysis of sales 
 - Which countries generate the most sales?
 - How does sales performance vary by location?
 
+---
+
 ## 4. KPIs and metrics
 
-| KPI / Metric      | Definition        |
-|-------------------|-------------------|
-| Total Sales       | Sum of sales amount   |
-| Total Orders      | Number of unique orders       |
-| Units Sold        | Sum of qunatities         |
-| Average Order Value   | Total sales / number of orders        |
-| Customer Sales      | Total sales attributed to a customer      |
-| Product Sales       | Total sales attributed to a product       |
+| KPI / Metric          | Definition                                |
+|-----------------------|-------------------------------------------|
+| Total Sales           | Sum of sales amount                       |
+| Total Orders          | Number of unique orders                   |
+| Units Sold            | Sum of qunatities                         |
+| Average Order Value   | Total sales / number of orders            |
+| Customer Sales        | Total sales attributed to a customer      |
+| Product Sales         | Total sales attributed to a product       |
+
+---
 
 ## 5. Scope
 ### In scope
@@ -65,6 +73,8 @@ Centralize data from the CRM and ERP source systems, enabling analysis of sales 
 - Spark
 - Real-time dashboards
 
+---
+
 ## 6. Business rules
 
 ### Customer rules
@@ -87,6 +97,8 @@ Centralize data from the CRM and ERP source systems, enabling analysis of sales 
 - Neither quantity nor unit price must be negative.
 - Sales amount is calculated using quantity and unit price.
 
+---
+
 ## 7. Expected outputs
 
 ### Warehouse
@@ -99,5 +111,3 @@ Centralize data from the CRM and ERP source systems, enabling analysis of sales 
 - `analytics.product_performance`
 - `analytis.customer_sales`
 - `analytics.sales_by_country`
-
-
