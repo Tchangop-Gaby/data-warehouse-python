@@ -1,14 +1,37 @@
 # 📂Source data dictionary
 
-## Overview
 Before deciding how to transform and model the data, we need a clear picture of what the source data actually looks like.
 
-### Remark
+## **Table of Contents**
+1. [Remark](#remark)
+2. [Inventory](#inventory)
+3. [Data Quality Baseline](#data-quality-baseline)
+    - [cust_info](#cust_info)
+    - [prd_info](#prd_info)
+    - [sales_details](#sales_details)
+    - [CUST_AZ12](#cust_az12)
+    - [LOC_A101](#loc_a101)
+    - [PX_CAT_G1V2](#px_cat_g1v2)
+
+
+## **Remark**
 The data types are derived obtained using pandas library, so the format mayber different from what you know (e.g. int maybe int64...)
 
 ---
 
-### **1. cust_info** 
+## **Inventory**
+| File      | Business meaning | Grain | Rows | Columns | Candidate PKs | Candidate FKs |
+|---|---|---|---|---|---|---|
+| cust_info | Customers Information | One row per customer | 18495 | 7 | cst_id | cst_key |
+| prd_info | Products Information | One row per product | 398 | 7 | prd_id | prd_key |
+| sales_details | Orders Details | One row per order-product line | 60398 | 9 | sls_ord_num | sls_prd_key, sls_cust_id | 
+| CUST_AZ12 | Customers Biographic Information | One row per customer | 18484 | 3 | CID | None | 
+| LOC_A101 | Customers Geographic Information | One row per customer | 18484 | 2 | CID | None |
+| PX_CAT_G1V2 | Product Category Information | One row per product/category | 37 | 4 | ID | None |
+
+## **Data Quality Baseline**
+
+### **cust_info** 
 - **Purpose:** Stores some customers details (demography and geographic information in CUST_AZ12 and LOC_A101)'
 - **Rows:** ~18495
 - **Header:** Yes
@@ -26,7 +49,7 @@ The data types are derived obtained using pandas library, so the format mayber d
 
 ---
 
-### **2. prd_info** 
+### **prd_info** 
 - **Purpose:** Store products details (category information in PX_CAT_G1V2).
 - **Rows:** ~398
 - **Header:** Yes
@@ -44,7 +67,7 @@ The data types are derived obtained using pandas library, so the format mayber d
 
 ---
 
-### **3. sales_details** 
+### **sales_details** 
 - **Purpose:** Stores the information on orders.
 - **Rows:** ~60398
 - **Header:** Yes
@@ -64,7 +87,7 @@ The data types are derived obtained using pandas library, so the format mayber d
 
 ---
 
-### **4. CUST_AZ12** 
+### **CUST_AZ12** 
 - **Purpose:** Stores customers demographic details.
 - **Rows:** ~18484
 - **Header:** Yes
@@ -78,7 +101,7 @@ The data types are derived obtained using pandas library, so the format mayber d
 
 ---
 
-### **5. LOC_A101** 
+### **LOC_A101** 
 - **Purpose:** Stores customers geographic details.
 - **Rows:** ~18484
 - **Header:** Yes
@@ -91,7 +114,7 @@ The data types are derived obtained using pandas library, so the format mayber d
 
 ---
 
-### **6. PX_CAT_G1V2** 
+### **PX_CAT_G1V2** 
 - **Purpose:** Stores products categories and maintenance details.
 - **Rows:** ~37
 - **Header:** Yes

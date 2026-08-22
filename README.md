@@ -8,4 +8,4 @@ Build a batch data warehouse that extracts six static CSV files, processes and v
 
 This project involves:
 
--  
+-
