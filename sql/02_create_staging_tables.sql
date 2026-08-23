@@ -1,3 +1,22 @@
+/*
+============================================================
+DDL: Staging Tables
+============================================================
+
+Purpose:
+    Define all staging tables used by the data warehouse pipeline.
+
+Schema: 
+    staging
+
+Tables:
+    1. staging.cust_info: Customers information
+    2. staging.prd_info: Products information
+    3. sales_details: Orders information
+    4. staging.cust_az12: Customers demographic information
+    5. staging.loc_a101: Customers geographic information
+    6. staging.px_cat_g1v2: Products categories information
+*/
 
 CREATE TABLE IF NOT EXISTS staging.cust_info (
     cst_id INTEGER,
