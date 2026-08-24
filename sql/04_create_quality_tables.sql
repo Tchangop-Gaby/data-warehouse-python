@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS quality.data_quality_results (
     checked_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_quality_severity
-        CHECK (severity IN ('INFO', 'WARNING', 'ERROR'))
+        CHECK (severity IN ('INFO', 'WARNING', 'ERROR')),
 
     CONSTRAINT chk_quality_status
         CHECK (status IN ('PASS', 'FAIL'))
