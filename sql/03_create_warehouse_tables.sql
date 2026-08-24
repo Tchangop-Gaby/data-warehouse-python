@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS warehouse.dim_customer (
     CONSTRAINT uq_dim_customer_customer_id
         UNIQUE (customer_id)
 );
+
 INSERT INTO warehouse.dim_customer (
     customer_key,
     customer_id,
@@ -80,7 +81,8 @@ INSERT INTO warehouse.dim_customer (
     last_name,
     birth_date,
     gender,
-    marital_status
+    marital_status,
+	country
 )
 VALUES (
     0,
@@ -94,6 +96,7 @@ VALUES (
     'Unknown'
 )
 ON CONFLICT (customer_key) DO NOTHING;
+
 
 CREATE TABLE IF NOT EXISTS warehouse.dim_product (
     product_key BIGSERIAL PRIMARY KEY,
@@ -112,6 +115,7 @@ CREATE TABLE IF NOT EXISTS warehouse.dim_product (
     CONSTRAINT uq_dim_product_id 
         UNIQUE (product_id)
 );
+
 INSERT INTO warehouse.dim_product (
     product_key,
     product_id,
@@ -121,7 +125,7 @@ INSERT INTO warehouse.dim_product (
     product_line,
     category,
     subcategory,
-    maintenace
+    maintenance
 )
 VALUES (
     0,
@@ -136,12 +140,12 @@ VALUES (
 )
 ON CONFLICT (product_key) DO NOTHING;
 
+
 CREATE TABLE IF NOT EXISTS warehouse.dim_date (
     date_key INTEGER PRIMARY KEY,
     full_date DATE NOT NULL UNIQUE,
     day_of_month INTEGER NOT NULL,
     day_of_week INTEGER NOT NULL,
-    day_name VARCHAR(20)NOT NULL,
     day_name VARCHAR(20) NOT NULL,
     month_number INTEGER NOT NULL,
     month_name VARCHAR(20) NOT NULL,
@@ -149,12 +153,12 @@ CREATE TABLE IF NOT EXISTS warehouse.dim_date (
     year_number INTEGER NOT NULL,
     week_number INTEGER NOT NULL
 );
+
 INSERT INTO warehouse.dim_date (
     date_key,
     full_date,
     day_of_month,
     day_of_week,
-    day_name,
     day_name,
     month_number,
     month_name,
@@ -185,7 +189,7 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_sales (
     ship_date_key INTEGER NOT NULL,
     due_date_key INTEGER NOT NULL,
     quantity INTEGER,
-    unit_price NUMERIC(18.2),
+    unit_price NUMERIC(18,2),
     sales_amount NUMERIC(18,2),
     dwh_load_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -199,7 +203,7 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_sales (
         FOREIGN KEY (order_date_key) REFERENCES warehouse.dim_date(date_key),
 
     CONSTRAINT fk_ship_date
-        FOREIGN KEY (ship_daate_key) REFERENCES warehouse.dim_date(date_key),
+        FOREIGN KEY (ship_date_key) REFERENCES warehouse.dim_date(date_key),
 
     CONSTRAINT fk_due_date
         FOREIGN KEY (due_date_key) REFERENCES warehouse.dim_date(date_key),
