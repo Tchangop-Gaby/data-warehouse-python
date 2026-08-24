@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_sales (
     quantity INTEGER,
     unit_price NUMERIC(18.2),
     sales_amount NUMERIC(18,2),
-    dwh_load_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    dwh_load_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_fact_customer
         FOREIGN KEY (customer_key) REFERENCES warehouse.dim_customer(customer_key),
