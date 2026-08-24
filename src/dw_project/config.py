@@ -1,3 +1,23 @@
+"""
+Database Configuration
+======================
+
+Purpose:
+    Loads, stores, and validates database connection
+    settings from environment variables.
+
+Description:
+    This model loads database configuration from the '.env' file,
+    a structured 'DatabaseConfig' object, and validates that all
+    required database settings are available.
+
+Configuration:
+    DATABASE_HOST       - Database server hostname.
+    DATABASE_PORT       - Database server port.
+    DATABASE_NAME       - Database name.
+    DATABASE_USER       - Database username.
+    DATABASE_PASSWORD   - Database password.    
+"""
 import os 
 from dataclasses import dataclass
 from dotenv import load_dotenv
@@ -13,6 +33,10 @@ class DatabaseConfig:
     password: str
 
 def get_database_config() -> DatabaseConfig:
+    """
+    Loads the database settings and returns a DatabaseConfig object.
+    """
+
     return DatabaseConfig(
         host=os.getenv("DATABASE_HOST", "localhost"),
         port=int(os.getenv("DATABASE_PORT", "5432")),
@@ -22,6 +46,10 @@ def get_database_config() -> DatabaseConfig:
     ) 
 
 def validate_database_config(config: DatabaseConfig) -> None:
+    """
+    Validates that all required databaseconfiguration
+    values are provided
+    """
     required_fields = {
         "DATABASE_HOST": config.host,
         "DATABASE_PORT": config.port,
@@ -35,5 +63,6 @@ def validate_database_config(config: DatabaseConfig) -> None:
         if value in ("", None)
     ]
 
+    # Raise an exception if one or more required database confiruation values are missing.
     if missing_fields:
         raise ValueError(f"Missing required database configuration: {','.join(missing_fields)}")
