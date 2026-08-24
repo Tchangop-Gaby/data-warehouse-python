@@ -1,13 +1,22 @@
 /*
-==================================================================
+===========================================================================
 DDL: Staging Tables
-==================================================================
+===========================================================================
 
 Purpose:
     Define all staging tables used by the data warehouse pipeline.
 
 Schema: 
     staging
+
+Description:
+    This file contains the Data Definition Language (DDL) statemensts
+    required to create the staging tables.
+
+Behavior:
+    - Creates tables only if they do not already exists.
+    - Stores raw/extracted data before transformation.
+    - Can be safely executed multiple times.
 
 Tables:
     1. staging.cust_info: Customers information
