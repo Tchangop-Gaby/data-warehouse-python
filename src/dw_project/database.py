@@ -22,6 +22,12 @@ Functions:
     get_database_version(engine):
         Retrieves the version information of the connected PostgreSQL database.
 
+    get_schemas(engine):
+        Retrieves the project's staging, warehouse, and quality schemas.
+    
+        get_project_tables(engine):
+            Retrieves the tables belonging to the project's schemas.
+
 Connection:
     The database connection URL is built using the following configuration:
         - DATABASE_HOST
@@ -105,4 +111,52 @@ def get_database_version(engine: Engine) -> str:
     with engine.connect() as connection:
         result = connection.execute(text("SELECT version()"))
         return result.scalar_one()
+
+def get_schemas(engine: Engine) -> list[str]:
+    """
+    Retrieve the project schemas available in the database.
+
+    Searches the database for the 'staging', 'warehouse', and 'quality' schemas
+    and returns their names in alphabetical order.
+
+    Args:
+        engine (Engine):
+            SQLAlchemy engine used to query the database.
     
+    Returns:
+        list[str]: Names of the project schemas found in the database.
+    """
+    query = text("""
+        SELECT schema_name FROM information_schema.schemata
+        WHERE schema_name IN ('staging', 'warehouse', 'quality')
+        ORDER BY schema_name;
+    """)
+
+    with engine.connect() as connection:
+        result = connection.execute(query)
+        return [row[0] for row in result]
+
+def get_project_tables(engine: Engine) -> list[tuple[str, str]]:
+    """
+    Retrieves tables belonging to the project schemas.
+
+    Searches the 'staging', 'warehouse', and 'quality' schemas and returns
+    each tables schema name and table name, ordered by schema and table.
+
+    Args:
+        engine(Engine):
+            SQLAlchemy engine used to query the database.
+    
+    Returns:
+        list[tuple[str, str]]:
+            List of '(schema_name, table_name)' pairs.
+    """
+    query = text("""
+        SELECT table_schema, table_name FROM information_schema.tables
+        WHERE table_schema IN ('staging', 'warehouse', 'quality')
+        ORDER BY table_schema, table_name;
+    """)
+
+    with engine.connect() as connection:
+        result = connection.execute(query)
+        return [(row[0], row[1]) for row in result]
