@@ -6,12 +6,11 @@ This document outlines the naming conventions used for schemas, tables, views, c
 
 1. [General Principles](#general-principles)
 2. [Table Naming Conventions](#table-naming-conventions)
-   - [Staging Rules](#staging-rules)
-   - [Model Rules](#model-rules)
+   - [Staging Rules](#bronze-rules)
+   - [Warehouse Rules](#gold-rules)
 3. [Column Naming Conventions](#column-naming-conventions)
    - [Surrogate Keys](#surrogate-keys)
    - [Technical Columns](#technical-columns)
-
 ---
 
 ## **General Principles**
@@ -29,7 +28,7 @@ This document outlines the naming conventions used for schemas, tables, views, c
   - `<entity>`: Exact table name from the source system.  
   - Example: `crm_customer_info` → Customer information from the CRM system.
 
-### **Model Rules**
+### **Warehouse Rules**
 - All names must use meaningful, business-aligned names for tables, starting with the category prefix.
 - **`<category>_<entity>`**  
   - `<category>`: Describes the role of the table, such as `dim` (dimension) or `fact` (fact table).  
