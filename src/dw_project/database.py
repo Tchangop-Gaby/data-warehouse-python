@@ -19,6 +19,9 @@ Functions:
     test_connection(engine):
         Executes a simple test query to verify database connectivity.
 
+    get_database_version(engine):
+        Retrieves the version information of the connected PostgreSQL database.
+
 Connection:
     The database connection URL is built using the following configuration:
         - DATABASE_HOST
@@ -87,4 +90,19 @@ def test_connection(engine: Engine) -> bool:
     with engine.connect() as connection:
         result = connection.execute(text("SELECT 1"))
         return result.scalar() == 1 
+
+def get_database_version(engine: Engine) -> str:
+    """
+    Retrieve the version of the connected PostgreSQL database.
+
+    Args:
+        engine (Engine):
+            SQLAlchemy engine used to connect to the database.
+    
+    Returns:
+        str: PostgreSQL server version information.        
+    """
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT version()"))
+        return result.scalar_one()
     
