@@ -19,8 +19,8 @@ Behavior:
     - Can be safely executed multiple times.
 
 Tables:
-    1. staging.erp_cust_info: Customers information
-    2. staging.erp_prd_info: Products information
+    1. staging.crm_cust_info: Customers information
+    2. staging.crm_prd_info: Products information
     3. staging.crm_sales_details: Orders information
     4. staging.erp_cust_az12: Customers demographic information
     5. staging.erp_loc_a101: Customers geographic information
@@ -30,7 +30,7 @@ Tables:
 CREATE TABLE IF NOT EXISTS staging.crm_cust_info (
     cst_id INTEGER,
     cst_key VARCHAR(50),
-    cst_firstname VARCHAR(100),erp_
+    cst_firstname VARCHAR(100),
     cst_lastname VARCHAR(100),
     cst_marital_status VARCHAR(20),
     cst_gndr VARCHAR(20),
@@ -73,6 +73,6 @@ CREATE TABLE IF NOT EXISTS staging.erp_loc_a101 (
 CREATE TABLE IF NOT EXISTS staging.erp_px_cat_g1v2 (
     ID VARCHAR(50),
     CAT VARCHAR(100),
-    SUBCAT VARCHAR(100),erp_
+    SUBCAT VARCHAR(100),
     MAINTENANCE VARCHAR(20)
 );
