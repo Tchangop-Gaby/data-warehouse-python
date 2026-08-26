@@ -24,3 +24,6 @@ data/quality/*
 # OS
 .DS_Store
 Thumb.db
+
+# PYthon Project Configuration
+data_warehouse_python.egg-info/
