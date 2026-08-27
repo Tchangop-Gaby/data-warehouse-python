@@ -37,6 +37,7 @@ def validate_database_config(config: DatabaseConfig) -> None:
 
     if missing_fileds:
         raise ValueError(f"Missing required database configuration: {','.join(missing_fileds)}")
+    
 @dataclass(frozen=True)
 class SourceFileConfig:
     source_system: str
