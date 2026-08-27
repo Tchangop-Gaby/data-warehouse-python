@@ -23,31 +23,38 @@ def get_database_config() -> DatabaseConfig:
 
 @dataclass(frozen=True)
 class SourceFileConfig:
+    source_system: str
     filename: str
     staging_table: str
 
 SOURCE_FILES = (
     SourceFileConfig(
+        source_system="crm/",
         filename="cust_info.csv",
         staging_table="crm_cust_info",
     ),
     SourceFileConfig(
+        source_system="crm/",
         filename="prd_info.csv",
         staging_table="crm_prd_info",
     ),
     SourceFileConfig(
+        source_system="crm/",
         filename="sales_details.csv",
         staging_table="crm_sales_details",
     ),
     SourceFileConfig(
+        source_system="erp/",
         filename="CUST_AZ12.csv",
         staging_table="erp_cust_az12",
     ),
     SourceFileConfig(
+        source_system="erp/",
         filename="LOC_A101.csv",
         staging_table="erp_loc_a101",
     ),
     SourceFileConfig(
+        source_system="erp/",
         filename="PX_CAT_G1V2.csv",
         staging_table="erp_px_cat_g1v2"
     ),
