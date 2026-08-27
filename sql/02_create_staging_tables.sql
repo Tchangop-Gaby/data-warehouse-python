@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS staging.crm_cust_info (
     cst_lastname VARCHAR(100),
     cst_marital_status VARCHAR(20),
     cst_gndr VARCHAR(20),
-    cst_create_date DATE
+    cst_create_date VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS staging.crm_prd_info (
@@ -43,17 +43,17 @@ CREATE TABLE IF NOT EXISTS staging.crm_prd_info (
     prd_nm VARCHAR(100),
     prd_cost NUMERIC(18,2),
     prd_line VARCHAR(50),
-    prd_start_dt DATE,
-    prd_end_dt DATE
+    prd_start_dt VARCHAR(50),
+    prd_end_dt VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS staging.crm_sales_details (
     sls_ord_num VARCHAR(50),
     sls_prd_key VARCHAR(50),
     sls_cust_id INTEGER,
-    sls_order_dt DATE,
-    sls_ship_dt DATE,
-    sls_due_dt DATE,
+    sls_order_dt VARCHAR(50),
+    sls_ship_dt VARCHAR(50),
+    sls_due_dt VARCHAR(50),
     sls_sales NUMERIC(18, 2),
     sls_quantity INTEGER,
     sls_price NUMERIC(18, 2)
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS staging.crm_sales_details (
 
 CREATE TABLE IF NOT EXISTS staging.erp_cust_az12 (
     CID VARCHAR(50),
-    BDATE DATE,
+    BDATE VARCHAR(50),
     GEN VARCHAR(20)
 );
 
