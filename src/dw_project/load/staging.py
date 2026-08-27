@@ -82,12 +82,15 @@ def load_dataframe_to_staging(
     
     rows_loaded = len(df)
 
+    df.columns = df.columns.str.lower()
+  
     df.to_sql(
         name=table_name,
         con=engine,
         schema="staging",
         if_exists="append",
         index=False,
+        chunksize=5000,
         method="multi"
     )
 
