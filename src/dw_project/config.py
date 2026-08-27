@@ -47,32 +47,32 @@ SOURCE_FILES = (
     SourceFileConfig(
         source_system="source_crm",
         filename="cust_info.csv",
-        staging_table="source_crm_cust_info",
+        staging_table="crm_cust_info",
     ),
     SourceFileConfig(
         source_system="source_crm",
         filename="prd_info.csv",
-        staging_table="source_crm_prd_info",
+        staging_table="crm_prd_info",
     ),
     SourceFileConfig(
         source_system="source_crm",
         filename="sales_details.csv",
-        staging_table="source_crm_sales_details",
+        staging_table="crm_sales_details",
     ),
     SourceFileConfig(
         source_system="source_erp",
         filename="CUST_AZ12.csv",
-        staging_table="source_erp_cust_az12",
+        staging_table="erp_cust_az12",
     ),
     SourceFileConfig(
         source_system="source_erp",
         filename="LOC_A101.csv",
-        staging_table="source_erp_loc_a101",
+        staging_table="erp_loc_a101",
     ),
     SourceFileConfig(
         source_system="source_erp",
         filename="PX_CAT_G1V2.csv",
-        staging_table="source_erp_px_cat_g1v2"
+        staging_table="erp_px_cat_g1v2"
     ),
 )
 
