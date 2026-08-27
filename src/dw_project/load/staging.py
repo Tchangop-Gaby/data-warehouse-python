@@ -18,6 +18,8 @@ Components:
         Clears a staging table.
     load_dataframe_to_staging():
         Loads a DataFrame into a staging table.
+    get_staging_row_count():
+        Get the numbber of rows in database table.
 """
 import pandas as pd
 from sqlalchemy import text
