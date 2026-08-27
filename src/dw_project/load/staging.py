@@ -100,6 +100,21 @@ def get_staging_row_count(
         table_name: str,
         engine: Engine,
 ) -> int:
+    """
+    Return the number of records currently in a staging table.
+
+    Args:
+        table_name:
+            Name of the staging table to count.
+        engine:
+            SQLAlchemy database engine.
+
+    Returns:
+        Number of records in the specified staging table.
+    
+        Raises:
+            ValueError: If the table is not allowed staging table.
+    """
     if table_name not in ALLOWED_STAGING_TABLES:
         raise ValueError(f"Invalid staging table: {table_name}")
 
