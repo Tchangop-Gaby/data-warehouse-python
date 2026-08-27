@@ -96,3 +96,14 @@ def load_dataframe_to_staging(
 
     return rows_loaded
 
+def get_staging_row_count(
+        table_name: str,
+        engine: Engine,
+) -> int:
+    if table_name not in ALLOWED_STAGING_TABLES:
+        raise ValueError(f"Invalid staging table: {table_name}")
+
+    query = text(f"SELECT COUNT(*) FROM staging.{table_name}")
+
+    with engine.connect() as connection:
+        return connection.execute(query).scalar_one()
