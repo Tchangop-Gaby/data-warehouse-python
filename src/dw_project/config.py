@@ -21,6 +21,22 @@ def get_database_config() -> DatabaseConfig:
         password=os.getenv("DATABASE_PASSWORD", ""),
     ) 
 
+def validate_database_config(config: DatabaseConfig) -> None:
+    required_fields = {
+        "DATABASE_HOST": config.host,
+        "DATABASE_PORT": config.port,
+        "DATABASE_NAME": config.database,
+        "DATABASE_USER": config.user,
+        "DATABASE_PASSWORD": config.password, 
+    }
+
+    missing_fileds = [
+        name for name, value in required_fields.items()
+        if value in ("", None)
+    ]
+
+    if missing_fileds:
+        raise ValueError(f"Missing required database configuration: {','.join(missing_fileds)}")
 @dataclass(frozen=True)
 class SourceFileConfig:
     source_system: str
