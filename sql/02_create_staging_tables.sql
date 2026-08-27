@@ -60,19 +60,19 @@ CREATE TABLE IF NOT EXISTS staging.crm_sales_details (
 );
 
 CREATE TABLE IF NOT EXISTS staging.erp_cust_az12 (
-    CID VARCHAR(50),
-    BDATE VARCHAR(50),
-    GEN VARCHAR(20)
+    cid VARCHAR(50),
+    bdate VARCHAR(50),
+    gen VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS staging.erp_loc_a101 (
-    CID VARCHAR(50),
-    CNTRY VARCHAR(100)
+    cid VARCHAR(50),
+    cntry VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS staging.erp_px_cat_g1v2 (
-    ID VARCHAR(50),
-    CAT VARCHAR(100),
-    SUBCAT VARCHAR(100),
-    MAINTENANCE VARCHAR(20)
+    id VARCHAR(50),
+    cat VARCHAR(100),
+    subcat VARCHAR(100),
+    maintenance VARCHAR(20)
 );
