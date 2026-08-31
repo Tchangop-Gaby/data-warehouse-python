@@ -1,0 +1,108 @@
+"""
+Common Data Transformation Utilities
+====================================
+
+Purpose:
+    Provide reusable validation, column standaardization,
+    date conversion, and data cleaning utilities for the 
+    transformation layer.
+
+Description:
+    This module contains shared functions used across 
+    dataset-specific transformations to ensure consistent 
+    data quality and formatting.
+
+Component:
+    validate_unique_key():
+        Checks for duplicate key values.
+    standardize_columns():
+        Converts column names to lowercase.
+    convert_dates():
+        Converts values to datetime.
+    standardize_date():
+        Removes leading and trailing whitespace
+"""
+import pandas as pd
+
+def validate_unique_key(
+        dataframe: pd.DataFrame,
+        key_column: str,
+        dataset_name: str,
+) -> None:
+    """
+    Validates that a dataset contains no duplicate key values.
+
+    Args:
+        dataframe: 
+            DatFrame containing the key to validate.
+        key_column:
+            Name of the column that must contain unique values.
+        dataset_name:
+            Name of the dataset used in the error message.
+
+    Raises:
+        ValueError: If duplicate key values are found.
+    """
+    duplicate_mask = dataframe[key_column].duplicated(keep=False)
+
+    if duplicate_mask.any():
+        duplicates = (
+            dataframe.loc[duplicate_mask, key_column].dropna().unique()
+        )
+
+        raise ValueError(
+            f"{dataset_name} contains duplicate "
+            f"{key_column} values: {duplicates[:10]}"
+        )
+
+def standardize_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """
+    Convert all DataFrame column names to lowercase.
+
+    Args:
+        dataframe:
+            DataFrame whose column names should be standardized.
+    
+    Returns:
+        A copy of the DatFrame with lowercase column names.
+    """
+    dataframe = dataframe.copy()
+
+    dataframe.columns = [
+        column.lower()
+        for column in dataframe.columns
+    ]
+
+    return dataframe
+
+def convert_dates(value: pd.Series) -> pd.Series:
+    """
+    Convert values to datetime, replacing invalid values 
+    with NaT.
+
+    Args:
+        value: 
+            Series containing date values.
+    """
+    value = pd.to_datetime(
+        value,
+        errors="coerce",
+    )
+
+    return value
+
+def standardize_data(value: pd.Series) -> pd.Series:
+    """
+    Remove leading and trailing whitespace from text 
+    values.
+
+    Args:
+        value:
+            Series containing text values.
+    
+    Return:
+        Series containing trimmed text values.
+    """
+    value = value.strip()
+
+    return value
