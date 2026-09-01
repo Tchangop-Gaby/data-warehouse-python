@@ -30,7 +30,7 @@ def test_customer_transform():
     cust_info = pd.DataFrame({
         "cst_id": [1],
         "cst_key": ["C001"],
-        "cst_firstname": ["John"],
+        "cst_firstname": [" John"],
         "cst_lastname": ["Doe"],
         "cst_marital_status": ["M"],
         "cst_gndr": ["M"],
@@ -58,6 +58,7 @@ def test_customer_transform():
     assert result.iloc[0]["customer_id"] == 1
     assert result.iloc[0]["first_name"] == "John"
     assert result.iloc[0]["country"] == "United States"
+    assert result.iloc[0]["birth_date"] == "1990-05-10"
 
 def test_customer_duplicate_auxiliary_key():
     """
