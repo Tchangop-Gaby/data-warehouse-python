@@ -16,7 +16,7 @@ Components:
     derive_category_key():
         Extracts product and category keys.
     reconcile_key():
-        Aligns product and category key formats.
+        Aligns category key formats.
     normalize_product_line():
         Standardizes product line values.
     enforce_chronology():
@@ -54,23 +54,21 @@ def derive_category_key(prd_info: pd.DataFrame) -> pd.DataFrame:
 
     return prd_info
 
-def reconcile_key(prd_info: pd.DataFrame) -> pd.DataFrame:
+def reconcile_key(value: pd.Series) -> pd.Series:
     """
-    Standardize product and category key seperators.
+    Standardize category key seperators.
 
     Args:
-        prd_info:
-            Product information DataFrame.
+        value:
+            Series containing category keys.
     
     Returns:
-        DataFrame with standardized product and category keys.
+        DataFrame with standardized category keys.
     """
-    prd_info = prd_info.copy()
 
-    prd_info["prd_key"] = prd_info["prd_key"].str.replace("-", "_", regex=False)
-    prd_info["cat_key"] = prd_info["cat_key"].str.replace("-", "_", regex=False)
+    value = value.str.replace("-", "_", regex=False)
 
-    return prd_info
+    return value
 
 def normalize_product_line(value: pd.Series) -> pd.Series:
     """
