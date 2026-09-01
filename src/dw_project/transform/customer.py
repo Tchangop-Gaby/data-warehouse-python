@@ -161,9 +161,9 @@ def transform_customer(
     """
 
     # Standardize source column names before applying transformations
-    cust_info = standardize_columns(cust_info)
-    cust_az12 = standardize_columns(cust_az12)
-    loc_a101 = standardize_columns(loc_a101)
+    cust_info = standardize_columns(cust_info).copy()
+    cust_az12 = standardize_columns(cust_az12).copy()
+    loc_a101 = standardize_columns(loc_a101).copy()
 
     # Remove non-identified customer values.
     cust_info = cust_info.dropna(subset=["cst_key"])
