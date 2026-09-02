@@ -45,8 +45,8 @@ def derive_category_key(prd_info: pd.DataFrame) -> pd.DataFrame:
     """
     prd_info = prd_info.copy()
 
-    prd_info["cat_key"] = prd_info["prd_key"].str[6:]
-    prd_info["prd_key"] = prd_info["prd_key"].str[:5]
+    prd_info["cat_key"] = prd_info["prd_key"].str[:5]
+    prd_info["prd_key"] = prd_info["prd_key"].str[6:]
 
     # Place the derived category key next to the product key.
     cat_key = prd_info.pop("cat_key")
@@ -54,7 +54,7 @@ def derive_category_key(prd_info: pd.DataFrame) -> pd.DataFrame:
 
     return prd_info
 
-def reconcile_key(value: pd.Series) -> pd.Series:
+def reconcile_key(values: pd.Series) -> pd.Series:
     """
     Standardize category key seperators.
 
@@ -66,9 +66,9 @@ def reconcile_key(value: pd.Series) -> pd.Series:
         DataFrame with standardized category keys.
     """
 
-    value = value.str.replace("-", "_", regex=False)
+    values = values.str.replace("-", "_", regex=False)
 
-    return value
+    return values
 
 def normalize_product_line(value: pd.Series) -> pd.Series:
     """
@@ -168,7 +168,7 @@ def transform_product(
 
     prd_info = derive_category_key(prd_info)
 
-    prd_info = reconcile_key(prd_info)
+    prd_info["cat_key"] = reconcile_key(prd_info["cat_key"])
 
     prd_info["prd_line"] = normalize_product_line(prd_info["prd_line"])
 

@@ -62,71 +62,71 @@ def reconcile_keys(
     cust_az12["cid"] = cust_az12["cid"].fillna("").astype(str).str.strip().str.upper()
     loc_a101["cid"] = loc_a101["cid"].fillna("").astype(str).str.strip().str.upper()
 
-    # Remove separators so auxiliary keys match the customer key format.
-    cust_az12["cid"] = cust_az12["cid"].str.replace("-","", regex=False)
-
     # Remove the NAS prefix used in location identifiers.
-    loc_a101.loc[
-        loc_a101["cid"].str.startswith("NAS", na=False),
+    cust_az12.loc[
+        cust_az12["cid"].str.startswith("NAS", na=False),
         "cid",
     ] = (
-            loc_a101.loc[
-            loc_a101["cid"].str.startswith("NAS", na=False),
+            cust_az12.loc[
+            cust_az12["cid"].str.startswith("NAS", na=False),
             "cid",
             ].str.replace("NAS", "", regex=False).str.strip()
         )
 
+    # Remove separators so auxiliary keys match the customer key format.
+    loc_a101["cid"] = loc_a101["cid"].str.replace("-","", regex=False)
+
     return cust_az12, loc_a101
 
-def normalize_gender(value: pd.Series) -> pd.Series:
+def normalize_gender(values: pd.Series) -> pd.Series:
     """
     Normalize gender values to a consistent representation.
 
     Args:
-        value: Series containing raw gender values.
+        values: Series containing raw gender values.
 
     Returns:
         Series containing stadardized gender values or "Unknown".
     """
-    value = value.fillna("").astype(str).str.strip().str.upper()
+    values = values.fillna("").astype(str).str.strip().str.upper()
 
-    return value.map({
+    return values.map({
         "M": "Male",
         "MALE": "Male",
         "F": "Female",
         "FEMALE": "Female",
     }).fillna("Unknown")
 
-def normalize_marital_status(value: pd.Series) -> pd.Series:
+def normalize_marital_status(values: pd.Series) -> pd.Series:
     """
     Normalize marital status values to a consistent representation.
 
     Args:
-        value: Series containing raw marital status values.
+        values: Series containing raw marital status values.
 
     Returns:
         Series containing stadardized marital status values or "Unknown".
     """
-    value = value.fillna("").astype(str).str.strip().str.upper()
+    values = values.fillna("").astype(str).str.strip().str.upper()
 
-    return value.map({
+    return values.map({
         "S": "Single",
         "M": "Married",
     }).fillna("Unknown")
 
-def normalize_country(value: pd.Series) -> pd.Series:
+def normalize_country(values: pd.Series) -> pd.Series:
     """
     Normalize country codes and names to standardized country names.
 
     Args:
-        value: Series containing raw country values.
+        values: Series containing raw country values.
 
     Returns:
         Series containing stadardized country names or "Unknown".
     """
-    value = value.fillna("").astype(str).str.strip().str.upper()
+    values = values.fillna("").astype(str).str.strip().str.upper()
 
-    return value.map({
+    return values.map({
         "DE": "Germany",
         "GERMANY": "Germany",
         "US": "United States",
@@ -195,8 +195,8 @@ def transform_customer(
     )
 
     # Convert data fields to a consistent datetime representation.
-    cust_info = convert_dates(cust_info)
-    cust_az12 = convert_dates(cust_az12)
+    cust_info["cst_create_date"] = convert_dates(cust_info["cst_create_date"])
+    cust_az12["bdate"] = convert_dates(cust_az12["bdate"])
 
     # Normalize customer demographic attributes.
     cust_info["cst_gndr"] = normalize_gender(cust_info["cst_gndr"])

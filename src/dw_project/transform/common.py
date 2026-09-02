@@ -75,34 +75,34 @@ def standardize_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
 
     return dataframe
 
-def convert_dates(value: pd.Series) -> pd.Series:
+def convert_dates(values: pd.Series) -> pd.Series:
     """
     Convert values to datetime, replacing invalid values 
     with NaT.
 
     Args:
-        value: 
+        values: 
             Series containing date values.
     """
-    value = pd.to_datetime(
-        value,
+    values = pd.to_datetime(
+        values,
         errors="coerce",
     )
 
-    return value
+    return values
 
-def standardize_data(value: pd.Series) -> pd.Series:
+def standardize_data(values: pd.Series) -> pd.Series:
     """
     Remove leading and trailing whitespace from text 
     values.
 
     Args:
-        value:
+        values:
             Series containing text values.
     
     Return:
         Series containing trimmed text values.
     """
-    value = value.strip()
+    values = values.str.strip()
 
-    return value
+    return values

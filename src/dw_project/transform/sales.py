@@ -41,6 +41,10 @@ def reconcile_sales_total(sales_details: pd.DataFrame) -> pd.DataFrame:
         DataFrame containing reconciled sales values.
     """
     sales = sales_details.copy()
+    
+    sales["sls_price"] = sales["sls_price"].abs()
+    sales["sls_quantity"] = sales["sls_quantity"].abs()
+    sales["sls_sales"] = sales["sls_sales"].abs()
 
     mask = (
         (sales["sls_price"] == 0) &
@@ -52,9 +56,6 @@ def reconcile_sales_total(sales_details: pd.DataFrame) -> pd.DataFrame:
         sales.loc[mask, "sls_sales"] /
         sales.loc[mask, "sls_quantity"]
     )
-
-    sales["sls_price"] = sales["sls_price"].abs()
-    sales["sls_sales"] = sales["sls_sales"].abs()
 
     # Ensure the sales amount is consistent with price and quantity
     sales["sls_sales"] = (
