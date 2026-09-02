@@ -29,23 +29,23 @@ def test_customer_transform():
     """
     cust_info = pd.DataFrame({
         "cst_id": [1],
-        "cst_key": ["C001"],
-        "cst_firstname": [" John"],
-        "cst_lastname": ["Doe"],
+        "cst_key": ["AW00011000"],
+        "cst_firstname": [" Jon"],
+        "cst_lastname": ["Yang "],
         "cst_marital_status": ["M"],
         "cst_gndr": ["M"],
-        "cst_create_date": ["2024-01-01"],
+        "cst_create_date": ["2025-10-06"],
     })
 
     cust_az12 = pd.DataFrame({
-        "CID": ["C001"],
-        "BDATE": ["1990-05-10"],
-        "GEN": ["M"],
+        "CID": ["NASAW00011000"],
+        "BDATE": ["1971-10-06"],
+        "GEN": ["Male"],
     })
 
     loc_a101 = pd.DataFrame({
-        "CID": ["C001"],
-        "CNTRY": ["USA"],
+        "CID": ["AW-00011000"],
+        "CNTRY": ["DE"],
     })
 
     result = transform_customer(
@@ -56,9 +56,9 @@ def test_customer_transform():
 
     assert len(result) == 1
     assert result.iloc[0]["customer_id"] == 1
-    assert result.iloc[0]["first_name"] == "John"
-    assert result.iloc[0]["country"] == "United States"
-    assert result.iloc[0]["birth_date"] == "1990-05-10"
+    assert result.iloc[0]["first_name"] == "Jon"
+    assert result.iloc[0]["country"] == "Germany"
+    assert result.iloc[0]["birth_date"] == pd.Timestamp('1971-10-6')
 
 def test_customer_duplicate_auxiliary_key():
     """

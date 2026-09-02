@@ -41,7 +41,7 @@ def test_sales_transform():
     result = transform_sales(sales)
 
     assert len(result) == 1
-    assert result.iloc[0]["order_date"] == 2010-12-29
+    assert result.iloc[0]["order_date"] == pd.Timestamp('2010-12-29')
     assert result.iloc[0]["sales_amount"] == 100
     assert result.iloc[0]["quantity"] == 2
     assert result.iloc[0]["unit_price"] == 50
