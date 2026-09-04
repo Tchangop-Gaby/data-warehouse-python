@@ -1,10 +1,36 @@
+"""
+Data Quality Pipeline
+=====================
+
+Purpose:
+    Execute data quality checks and summarize their results
+
+Description:
+    Provides utilities for running a collection of quality
+    checks, evaluating whether the quality gate passed,
+    printing a human-readable quality report, and generating
+    a summary of passed and failed checks.
+
+Components:
+    run_pipeline_checks():
+        Executes all configured quality checks.
+    quality_gate_passed():
+        Determines whether all checks passed.
+    print_quality_report():
+        Print a formatted quality report.
+    summary_quality():
+        Summarizes the quality check results.
+"""
 from collections.abc import Callable
 from .result import QualityResult
 
 def run_pipeline_checks(
         checks: list[Callable[[], QualityResult]],
 ) -> list[QualityResult]:
-
+    """
+    Execute all configured quality checks and return
+    their results.
+    """
     results = []
 
     for check in checks:
@@ -16,7 +42,9 @@ def run_pipeline_checks(
 def quality_gate_passed(
         results: list[QualityResult],
 ) -> bool:
-
+    """
+    Return True when all quality checks have passed.
+    """
     return all(
         result.passed
         for result in results
@@ -25,7 +53,10 @@ def quality_gate_passed(
 def print_quality_report(
         results: list[QualityResult],
 ) -> None:
-
+    """
+    Print a formatted report containing the quality
+    check results.
+    """
     print("\nDATA QUALITY REPORT")
     print("=" * 70)
 
@@ -43,7 +74,10 @@ def print_quality_report(
 def summary_quality(
         results: list[QualityResult],
 ) -> dict:
-
+    """
+    Return counts of total, passed, and failed quality
+    checks.
+    """
     return {
         "total_checks": len(results),
         "passed": sum(
