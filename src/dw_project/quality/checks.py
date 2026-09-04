@@ -1,3 +1,37 @@
+"""
+Data Quality Rules
+==================
+
+Purpose:
+    Provide reusable validation rules for checking
+    data quality across transformed datasets
+
+Description:
+    This module contains common data quality checks for
+    nill values, uniqueness, numeric ranges, dates, allowed
+    values, referential integrity, sales reconciliation,
+    and date sequences.
+
+Components: 
+    check_not_null():
+        Check for missing values.
+    check_unique():
+        Checks for duplicate values.
+    check_non_negative():
+        Checks for negative numeric values.
+    check_valid_dates():
+        Checks for missing or invalid dates.
+    check_allowed_values():
+        Checks values against an allowed set.
+    check_referential_integrity():
+        Validate child-to-parent key relationships.
+    check_sales_reconciliation():
+        Validates sales amount calculations
+    check_product_date_sequence():
+        Validates product date ranges.
+    check_sales_date_sequence():
+        Validates sales date chronology.
+"""
 import pandas as pd
 
 from .result import (
@@ -10,7 +44,9 @@ def check_not_null(
         column: str,
         rule_name: str,
 ) ->QualityResult:
-
+    """
+    Check whether a column contains null values.
+    """
     null_mask = dataframe[column].isna()
 
     affected = int(null_mask.sum())
@@ -39,7 +75,9 @@ def check_unique(
         column: str,
         rule_name: str,
 ) -> QualityResult:
-
+    """
+    Check whether all values in a column are unique.
+    """
     duplicate_mask = dataframe[column].duplicated(keep=False)
 
     affected = int(duplicate_mask.sum())
@@ -69,7 +107,9 @@ def check_non_negative(
         column: str,
         rule_name: str,
 ) -> QualityResult:
-
+    """
+    Check whether a numeric column contains negative values.
+    """
     invalid_mask = dataframe[column].notna() & (
         dataframe[column] < 0
     )
@@ -102,7 +142,9 @@ def check_valid_dates(
         column: str,
         rule_name: str,
 ) -> QualityResult:
-
+    """
+    Check whether a date column contains missing or invalid dates.
+    """
     invalid_mask = dataframe[column].isna()
 
     affected = int(invalid_mask.sum())
@@ -134,7 +176,9 @@ def check_allowed_values(
         allowed_values: set,
         rule_name: str,
 ) -> QualityResult:
-
+    """
+    Check whether non-null values belong to an allowed set.
+    """
     invalid_mask = (
         dataframe[column].notna() &
         ~dataframe[column].isin(allowed_values)
@@ -170,7 +214,9 @@ def check_referential_integrity(
         parent_column: str,
         rule_name: str,
 ) -> QualityResult:
-
+    """
+    Check that child keys exist in the corresponding parent dataset.
+    """
     valid_keys = set(
         parent_df[parent_column].dropna().unique()
     )
@@ -210,7 +256,9 @@ def check_sales_reconciliation(
         dataframe: pd.DataFrame,
         tolerance: float = 0.01,
 ) -> QualityResult:
-
+    """
+    Check that sales amount equals quantity multiplied by unit price.
+    """
     expected_sales = (
         dataframe["quantity"] * dataframe["unit_price"]
     )
@@ -250,7 +298,9 @@ def check_sales_reconciliation(
 def check_product_date_sequence(
         dataframe: pd.DataFrame,
 ) -> QualityResult:
-
+    """
+    Check that product start dates do not occur after end dates.
+    """
     invalid_mask = (
         dataframe["product_start_date"] > dataframe["product_end_date"]
     )
@@ -259,7 +309,7 @@ def check_product_date_sequence(
     total = len(dataframe)
 
     if affected == 0:
-        QualityResult(
+        return QualityResult(
             rule_name="prduct_date_sequence",
             status=QualityStatus.PASS,
             row_checked=total,
@@ -283,7 +333,9 @@ def check_product_date_sequence(
 def check_sales_date_sequence(
         dataframe: pd.DataFrame,
 ) -> QualityResult:
-
+    """
+    Check that sales dates follow the expected order.
+    """
     invalid_mask = (
         (dataframe["ship_date"] < dataframe["order_date"]) |
         (dataframe["due_date"] < dataframe["order_date"])
