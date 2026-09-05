@@ -57,6 +57,7 @@ def check_not_null(
             rule_name=rule_name,
             status=QualityStatus.PASS,
             row_checked=total,
+            rows_affected=0,
             message=f"{column} contains no null values",
         )
 
