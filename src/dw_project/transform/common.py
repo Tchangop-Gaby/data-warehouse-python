@@ -20,7 +20,9 @@ Component:
     convert_dates():
         Converts values to datetime.
     standardize_date():
-        Removes leading and trailing whitespace
+        Removes leading and trailing whitespace.
+    add_customer_surrogate_key():
+        Adds sequentials customer keys.
 """
 import pandas as pd
 
@@ -106,3 +108,25 @@ def standardize_data(values: pd.Series) -> pd.Series:
     values = values.str.strip()
 
     return values
+
+def add_surrogate_key(
+        dataframe: pd.DataFrame,
+        key_name: str,
+) -> pd.DataFrame:
+    """
+    Add a sequential surrogate key to the customer 
+    DataFrame.
+    """
+    dataframe = dataframe.copy()
+
+    dataframe = dataframe.sort_values(
+        by=key_name
+    ).reset_index(drop=True)
+
+    dataframe.insert(
+        0,
+        "customer_key",
+        range(1, len(dataframe) + 1),
+    )
+
+    return dataframe
