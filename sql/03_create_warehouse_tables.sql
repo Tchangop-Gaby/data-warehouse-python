@@ -67,7 +67,6 @@ CREATE TABLE IF NOT EXISTS warehouse.dim_customer (
     marital_status VARCHAR(20),
     country VARCHAR(100),
     create_date DATE,
-    dwh_load_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT uq_dim_customer_customer_id
         UNIQUE (customer_id)
@@ -110,7 +109,6 @@ CREATE TABLE IF NOT EXISTS warehouse.dim_product (
     maintenance VARCHAR(100),
     start_date DATE,
     end_date DATE,
-    dwh_load_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT uq_dim_product_id 
         UNIQUE (product_id)
@@ -191,7 +189,6 @@ CREATE TABLE IF NOT EXISTS warehouse.fact_sales (
     quantity INTEGER,
     unit_price NUMERIC(18,2),
     sales_amount NUMERIC(18,2),
-    dwh_load_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_fact_customer
         FOREIGN KEY (customer_key) REFERENCES warehouse.dim_customer(customer_key),
