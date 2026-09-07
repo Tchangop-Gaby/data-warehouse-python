@@ -61,18 +61,6 @@ COLUMNS = {
         "year_number",
         "week_number",
     ],
-    "fact_sales": [
-        "sales_key",
-        "sales_number",
-        "customer_key",
-        "product_key",
-        "order_date_key",
-        "ship_date_key",
-        "due_date_key",
-        "quantity",
-        "unit_price",
-        "sales_amount",
-    ],
 }
 
 def load_customer_dimension(
