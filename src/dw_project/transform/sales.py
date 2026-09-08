@@ -126,7 +126,10 @@ def resolve_customer_keys(
         sales_df: pd.DataFrame,
         customer_dim: pd.DataFrame,
 ) -> pd.DataFrame:
-
+    """
+    Resolve source customer IDs to warehouse
+    customer surrogate keys.
+    """
     lookup = customer_dim[
         [
             "customer_key",
@@ -152,7 +155,10 @@ def resolve_product_keys(
         sales_df: pd.DataFrame,
         product_dim: pd.DataFrame,
 ) -> pd.DataFrame:
-
+    """
+    Resolve source product IDs to warehouse
+    customer surrogate keys.
+    """
     lookup = product_dim[
         [
             "product_key",
@@ -175,7 +181,10 @@ def resolve_date_key(
         source_column: str,
         target_column: str,
 ) -> pd.DataFrame:
-
+    """
+    Resolve source date IDs to warehouse
+    customer surrogate keys.
+    """
     lookup = date_dim[
         [
             "date_key",
@@ -209,7 +218,10 @@ def prepare_fact_sales(
         product_dim: pd.DataFrame,
         date_dim: pd.DataFrame,
 ) -> pd.DataFrame:
-
+    """
+    Resolve dimension and date keys and 
+    prepare sales fact records.
+    """
     result = sales_df.copy()
 
     result = resolve_customer_keys(
