@@ -366,3 +366,40 @@ def check_sales_date_sequence(
             "sales date sequences"
         ),
     )
+
+def check_row_count_reconciliation(
+        source_df: pd.DataFrame,
+        target_df: pd.DataFrame,
+        rule_name: str,
+) -> QualityResult:
+    """
+    Verify that source and target datasets 
+    contain the same number of rows.
+    """
+    source_count = len(source_df)
+    target_count = len(target_df)
+
+    if source_count == target_count:
+        return QualityResult(
+            rule_name=rule_name,
+            status=QualityStatus.PASS,
+            row_checked=source_count,
+            rows_affected=0,
+            message=(
+                f"Source and target both contain "
+                f"{source_count} rows"
+            ),
+        )
+
+    return QualityResult(
+        rule_name=rule_name,
+        status=QualityStatus.FAIL,
+        row_checked=source_count,
+        rows_affected=abs(
+            source_count - target_count
+        ),
+        message=(
+            f"Source={source_count}, "
+            f"target={target_count}"
+        ),
+    )
