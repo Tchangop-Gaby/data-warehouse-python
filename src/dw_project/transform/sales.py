@@ -121,3 +121,156 @@ def transform_sales(
             "unit_price",
         ]
     ]
+
+def resolve_customer_keys(
+        sales_df: pd.DataFrame,
+        customer_dim: pd.DataFrame,
+) -> pd.DataFrame:
+
+    lookup = customer_dim[
+        [
+            "customer_key",
+            "customer_id",
+        ]
+    ].copy()
+
+    result = sales_df.merge(
+        lookup,
+        how="left",
+        left_on="customer_id",
+        right_on="customer_id",
+        validate="many_to_one",
+    )
+
+    result = result.drop(
+        columns=["customer_id"]
+    )
+
+    return result
+
+def resolve_product_keys(
+        sales_df: pd.DataFrame,
+        product_dim: pd.DataFrame,
+) -> pd.DataFrame:
+
+    lookup = product_dim[
+        [
+            "product_key",
+            "product_code",
+        ]
+    ].copy()
+
+    result = sales_df.merge(
+        lookup,
+        how="left",
+        on="product_code",
+        validate="many_to_one",
+    )
+
+    return result
+
+def resolve_date_key(
+        sales_df: pd.DataFrame,
+        date_dim: pd.DataFrame,
+        source_column: str,
+        target_column: str,
+) -> pd.DataFrame:
+
+    lookup = date_dim[
+        [
+            "date_key",
+            "full_date",
+        ]
+    ].copy()
+
+    result = sales_df.merge(
+        lookup,
+        how="left",
+        left_on=source_column,
+        right_on="full_date",
+        validate="many_to_one",
+    )
+
+    result = result.rename(
+        columns={
+            "date_key": target_column
+        }
+    )
+
+    result = result.drop(
+        columns=["full_date"]
+    )
+
+    return result 
+
+def prepare_fact_sales(
+        sales_df: pd.DataFrame,
+        customer_dim: pd.DataFrame,
+        product_dim: pd.DataFrame,
+        date_dim: pd.DataFrame,
+) -> pd.DataFrame:
+
+    result = sales_df.copy()
+
+    result = resolve_customer_keys(
+        result,
+        customer_dim,
+    )
+
+    result = resolve_product_keys(
+        result,
+        product_dim,
+    )
+
+    result = resolve_date_key(
+        result,
+        date_dim,
+        "order_date",
+        "order_date_key",
+    )
+
+    result = resolve_date_key(
+        result,
+        date_dim,
+        "ship_date",
+        "ship_date_key",
+    )
+
+    result = resolve_date_key(
+        result,
+        date_dim,
+        "due_date",
+        "due_date_key",
+    )
+
+    result["customer_key"] = (
+        result["customer_key"]
+        .fillna(0)
+        .astype(int)
+    )
+
+    result["product_key"] = (
+        result["product_key"]
+        .fillna(0)
+        .astype(int)
+    )
+
+    result["order_date_key"] = (
+        result["order_date_key"]
+        .fillna(0)
+        .astype(int)
+    )
+
+    result["ship_date_key"] = (
+        result["ship_date_key"]
+        .fillna(0)
+        .astype(int)
+    )
+
+    result["due_date_key"] = (
+        result["due_date_key"]
+        .fillna(0)
+        .astype(int)
+    )
+
+    return result    
