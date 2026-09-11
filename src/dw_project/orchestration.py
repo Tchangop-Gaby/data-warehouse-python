@@ -11,6 +11,9 @@ from .extract.csv_loader import (
     load_csv,
     validate_columns,
 )
+from .extract.postgres import (
+    read_staging_table,
+)
 
 from .database import (
     create_db_engine
@@ -31,7 +34,9 @@ def run_pipeline():
 
     data = extraction_stage()
 
-    staging_stage(data, db_engine)
+    staging_loading_stage(data, db_engine)
+
+    data = staging_extraction_stage(db_engine)
 
     # transformation_stage()
 
@@ -72,7 +77,7 @@ def extraction_stage() -> dict:
     return results
 
 
-def staging_stage(dict_of_data: dict, engine: Engine) -> None:
+def staging_loading_stage(dict_of_data: dict, engine: Engine) -> None:
 
     logger.info("Starting staging load")
 
@@ -91,10 +96,19 @@ def staging_stage(dict_of_data: dict, engine: Engine) -> None:
 
     logger.info("Staging load completed")
 
+def staging_extraction_stage(engine) -> dict:
+
+    dict_of_data = {}
+
+    for source_file in SOURCE_FILES:
+
+        dict_of_data[Path(source_file.filename).stem] = read_staging_table(source_file.staging_table, engine)
+
+    return dict_of_data
 
 def transformation_stage():
     ...
-
+    
 def dimension_stage():
     ...
 
