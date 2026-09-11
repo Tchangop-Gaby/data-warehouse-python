@@ -23,6 +23,7 @@ Components:
 """
 from collections.abc import Callable
 from .result import QualityResult
+from dw_project.logger_config import quality_logger
 
 def run_pipeline_checks(
         checks: list[Callable[[], QualityResult]],
@@ -57,19 +58,20 @@ def print_quality_report(
     Print a formatted report containing the quality
     check results.
     """
-    print("\nDATA QUALITY REPORT")
-    print("=" * 70)
+    quality_logger.info("=" * 70)
+    quality_logger.info("DATA QUALITY REPORT")
+    quality_logger.info("=" * 70)
 
     for result in results:
-        print(
+        quality_logger.info(
             f"{result.status.value:<6} | "
             f"{result.rule_name:<35} | "
             f"affected={result.rows_affected}"
         )
 
-        print(f"{result.message}")
+        quality_logger.info(f"{result.message}")
 
-    print("=" * 70)
+    quality_logger.info("=" * 70)
 
 def summary_quality(
         results: list[QualityResult],

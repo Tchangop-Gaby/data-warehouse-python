@@ -38,6 +38,9 @@ from .result import (
     QualityStatus,
     QualityResult,
 )
+from .runner import (
+    run_pipeline_checks,
+)
 
 def check_not_null(
         dataframe: pd.DataFrame,
@@ -56,7 +59,7 @@ def check_not_null(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=f"{column} contains no null values",
         )
@@ -64,7 +67,7 @@ def check_not_null(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{column} contains {affected} null values"
@@ -88,7 +91,7 @@ def check_unique(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=f"{column} is unique",
         )
@@ -96,7 +99,7 @@ def check_unique(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{column} contains duplicate values"
@@ -122,7 +125,7 @@ def check_non_negative(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=f"{column} contains no negative values",
         )
@@ -130,7 +133,7 @@ def check_non_negative(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{column} contains {affected} "
@@ -155,7 +158,7 @@ def check_valid_dates(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             affected=0,
             message=f"{column} contains valid dates"
         )
@@ -163,7 +166,7 @@ def check_valid_dates(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{column} contains {affected} "
@@ -192,7 +195,7 @@ def check_allowed_values(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=f"{column} contains only allowed values"
         )
@@ -200,7 +203,7 @@ def check_allowed_values(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{column} contains {affected} "
@@ -234,7 +237,7 @@ def check_referential_integrity(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=(
                 f"All {child_column} values "
@@ -245,7 +248,7 @@ def check_referential_integrity(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{affected} {child_column} values "
@@ -277,7 +280,7 @@ def check_sales_reconciliation(
         return QualityResult(
             rule_name="sales_reconciliation",
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=(
                 "Sales amount reconciles with "
@@ -288,7 +291,7 @@ def check_sales_reconciliation(
     return QualityResult(
         rule_name="sales_reconciliation",
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
             f"{affected} rows failed sales "
@@ -296,14 +299,17 @@ def check_sales_reconciliation(
         )
     )
 
-def check_product_date_sequence(
+def check_date_sequence(
         dataframe: pd.DataFrame,
+        previous: str,
+        next: str,
+        rule_name: str,
 ) -> QualityResult:
     """
     Check that product start dates do not occur after end dates.
     """
     invalid_mask = (
-        dataframe["product_start_date"] > dataframe["product_end_date"]
+        dataframe[previous] > dataframe[next]
     )
 
     affected = int(invalid_mask.sum())
@@ -311,59 +317,22 @@ def check_product_date_sequence(
 
     if affected == 0:
         return QualityResult(
-            rule_name="prduct_date_sequence",
+            rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=total,
+            rows_checked=total,
             rows_affected=0,
             message=(
-                "Product dates follow expected sequence"
+                "Dates follow expected sequence"
             ),
         )
 
     return QualityResult(
-        rule_name="prduct_date_sequence",
+        rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=total,
+        rows_checked=total,
         rows_affected=affected,
         message=(
-            f"{affected} rows contain invalid "
-            "sales date sequences"
-        ),
-    )
-
-def check_sales_date_sequence(
-        dataframe: pd.DataFrame,
-) -> QualityResult:
-    """
-    Check that sales dates follow the expected order.
-    """
-    invalid_mask = (
-        (dataframe["ship_date"] < dataframe["order_date"]) |
-        (dataframe["due_date"] < dataframe["order_date"])
-    )
-
-    affected = int(invalid_mask.sum())
-    total = len(dataframe)
-
-    if affected == 0:
-        return QualityResult(
-            rule_name="sales_date_sequence",
-            status=QualityStatus.PASS,
-            row_checked=total,
-            rows_affected=0,
-            message=(
-                "Sales dates follow the expected sequence"
-            ),
-        )
-
-    return QualityResult(
-        rule_name="sales_date_sequence",
-        status=QualityStatus.FAIL,
-        row_checked=total,
-        rows_affected=affected,
-        message=(
-            f"{affected} rows contain invalid "
-            "sales date sequences"
+            f"{affected} rows contain invalid date sequences"
         ),
     )
 
@@ -383,7 +352,7 @@ def check_row_count_reconciliation(
         return QualityResult(
             rule_name=rule_name,
             status=QualityStatus.PASS,
-            row_checked=source_count,
+            rows_checked=source_count,
             rows_affected=0,
             message=(
                 f"Source and target both contain "
@@ -394,7 +363,7 @@ def check_row_count_reconciliation(
     return QualityResult(
         rule_name=rule_name,
         status=QualityStatus.FAIL,
-        row_checked=source_count,
+        rows_checked=source_count,
         rows_affected=abs(
             source_count - target_count
         ),
@@ -403,3 +372,156 @@ def check_row_count_reconciliation(
             f"target={target_count}"
         ),
     )
+
+def validate_customers(customer_df: pd.DataFrame) -> list:
+
+    customer_checks = [
+        lambda: check_not_null(
+            customer_df,
+            "customer_id",
+            "customer_id_not_null",
+        ),
+
+        lambda: check_not_null(
+            customer_df,
+            "customer_code",
+            "customer_code_not_null",
+        ),
+
+        lambda: check_unique(
+            customer_df,
+            "customer_id",
+            "customer_id_unique",
+        ),
+
+        lambda: check_unique(
+            customer_df,
+            "customer_code",
+            "customer_code_unique",
+        ),
+
+        lambda: check_allowed_values(
+            customer_df,
+            "gender",
+            {"Male", "Female", "Unknown"},
+            "customer_gender_valid",
+        ),
+
+        lambda: check_allowed_values(
+            customer_df,
+            "marital_status",
+            {"Single", "Married", "Unknown"},
+            "customer_marital_status_valid",
+        ),
+    ]
+
+    results = run_pipeline_checks(customer_checks)
+
+    return results
+
+def validate_products(product_df: pd.DataFrame) -> list:
+
+    product_checks = [
+        lambda: check_not_null(
+            product_df,
+            "product_id",
+            "product_id_not_null",
+        ),
+
+        lambda: check_not_null(
+            product_df,
+            "product_code",
+            "product_code_not_null",
+        ),
+
+        lambda: check_unique(
+            product_df,
+            "product_id",
+            "product_id_unique",
+        ),
+
+        lambda: check_unique(
+            product_df,
+            "product_code",
+            "product_code_unique",
+        ),
+
+        lambda: check_non_negative(
+            product_df,
+            "product_cost",
+            "product_cost_non_negative",
+        ),
+
+        lambda: check_date_sequence(
+            product_df,
+            "start_date",
+            "end_date",
+            "product_date_sequence_valid",
+        ),
+    ]
+
+    results = run_pipeline_checks(product_checks)
+
+    return results
+
+def validate_sales(sales_df: pd.DataFrame) -> list:
+
+    sales_checks = [
+        lambda: check_not_null(
+            sales_df,
+            "order_number",
+            "sales_order_number_not_null",
+        ),
+
+        lambda: check_not_null(
+            sales_df,
+            "product_key_source",
+            "sales_product_key_source_not_null",
+        ),
+
+        lambda: check_not_null(
+            sales_df,
+            "customer_id_source",
+            "sales_customer_id_source_not_null",
+        ),
+
+        lambda: check_non_negative(
+            sales_df,
+            "sales_amount",
+            "sales_amount_non_negative",
+        ),
+
+        lambda: check_non_negative(
+            sales_df,
+            "quantity",
+            "sales_quantity_non_negative",
+        ),
+
+        lambda: check_non_negative(
+            sales_df,
+            "unit_price",
+            "unit_price_non_negative",
+        ),
+
+        lambda: check_date_sequence(
+            sales_df,
+            "order_date",
+            "ship_date",
+            "order_and_ship_date_sequence_valid",
+        ),
+
+        lambda: check_date_sequence(
+            sales_df,
+            "ship_date",
+            "due_date",
+            "ship_and_due_date_sequence_valid",
+        ),
+
+        lambda: check_sales_reconciliation(
+            sales_df
+        ),
+    ]
+
+    results = run_pipeline_checks(sales_checks)
+
+    return results

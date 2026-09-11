@@ -37,7 +37,7 @@ class QualityResult:
     """
     rule_name: str
     status: str
-    row_checked: int
+    rows_checked: int
     rows_affected: int
     message: str
 

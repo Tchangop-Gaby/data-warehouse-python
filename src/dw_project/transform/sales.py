@@ -140,13 +140,13 @@ def resolve_customer_keys(
     result = sales_df.merge(
         lookup,
         how="left",
-        left_on="customer_id",
+        left_on="customer_id_source",
         right_on="customer_id",
         validate="many_to_one",
     )
 
     result = result.drop(
-        columns=["customer_id"]
+        columns=["customer_id_source"]
     )
 
     return result
@@ -169,8 +169,13 @@ def resolve_product_keys(
     result = sales_df.merge(
         lookup,
         how="left",
-        on="product_code",
+        left_on="product_key_source",
+        right_on="product_code",
         validate="many_to_one",
+    )
+
+    result = result.drop(
+        columns=["product_key_source"]
     )
 
     return result

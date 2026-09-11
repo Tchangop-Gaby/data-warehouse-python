@@ -41,45 +41,25 @@ def create_date_dimension(
         "full_date": pd.to_datetime(dates)
     })
 
-    dates = dates.sort_values(
-        "full_date"
-    ).reset_index(drop=True)
+    dates = dates.sort_values("full_date").reset_index(drop=True)
 
-    dates["date_key"] = dates[
-        "full_date"
-    ].dt.strftime("%Y%m%d").astype(int)
+    dates["date_key"] = dates["full_date"].dt.strftime("%Y%m%d").astype(int)
 
-    dates["day_of_month"] = dates[
-        "full_date"
-    ].dt.day
+    dates["day_of_month"] = dates["full_date"].dt.day
 
-    dates["day_of_week"] = dates[
-        "full_date",
-    ].dt.dayofweek + 1
+    dates["day_of_week"] = dates["full_date"].dt.dayofweek + 1
 
-    dates["day_name"] = dates[
-        "full_date"
-    ].dt.day_name()
+    dates["day_name"] = dates["full_date"].dt.day_name()
 
-    dates["month_number"] = dates[
-        "full_date"
-    ].dt.month
+    dates["month_number"] = dates["full_date"].dt.month
 
-    dates["month_name"] = dates[
-        "full_date"
-    ].dt.month_name()
+    dates["month_name"] = dates["full_date"].dt.month_name()
 
-    dates["quarter_number"] = dates[
-        "full_date"
-    ].dt.quarter
+    dates["quarter_number"] = dates["full_date"].dt.quarter
 
-    dates["year_number"] = dates[
-        "full_date"
-    ].dt.year
+    dates["year_number"] = dates["full_date"].dt.year
 
-    dates["week_number"] = dates[
-        "full_date"
-    ].dt.isocalendar().week.astype(int)
+    dates["week_number"] = dates["full_date"].dt.isocalendar().week.astype(int)
 
     return dates[
         [

@@ -16,7 +16,7 @@ Description:
 Components:
     COLUMNS: 
         Defines the expected columns for each warehouse table.
-    load_tables():
+    load_dimension():
         Loads a DataFrame into a warehouse table.
 """
 import pandas as pd
@@ -26,7 +26,6 @@ from sqlalchemy.engine import Engine
 COLUMNS = {
     "dim_customer": [
         "customer_key",
-        "customer_id",
         "customer_code",
         "first_name",
         "last_name",
@@ -38,7 +37,6 @@ COLUMNS = {
     ],
     "dim_product": [
         "product_key",
-        "product_id",
         "product_code",
         "product_name",
         "product_cost",
@@ -63,7 +61,7 @@ COLUMNS = {
     ],
 }
 
-def load_customer_dimension(
+def load_dimension(
         dataframe: pd.DataFrame,
         table_name: str,
         columns: list[str],
@@ -81,6 +79,6 @@ def load_customer_dimension(
         table_name,
         engine,
         schema="warehouse",
-        if_exists="append",
+        if_exists="replace",
         index=False,
     )

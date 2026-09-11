@@ -170,7 +170,7 @@ def transform_customer(
     loc_a101 = standardize_columns(loc_a101).copy()
 
     # Remove non-identified customer values.
-    cust_info = cust_info.dropna(subset=["cst_key"])
+    cust_info = cust_info.dropna(subset=["cst_id"])
     cust_az12 = cust_az12.dropna(subset=["cid"])
     loc_a101 = loc_a101.dropna(subset=["cid"])
 
@@ -257,7 +257,7 @@ def transform_customer(
     result = result.rename(
         columns={
             "cst_id": "customer_id",
-            "cst_key": "customer_key",
+            "cst_key": "customer_code",
             "cst_firstname": "first_name",
             "cst_lastname": "last_name",
             "cst_marital_status": "marital_status",

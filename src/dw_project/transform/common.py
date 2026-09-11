@@ -115,6 +115,7 @@ def standardize_data(values: pd.Series) -> pd.Series:
 
 def add_surrogate_key(
         dataframe: pd.DataFrame,
+        id_name: str,
         key_name: str,
 ) -> pd.DataFrame:
     """
@@ -123,13 +124,11 @@ def add_surrogate_key(
     """
     dataframe = dataframe.copy()
 
-    dataframe = dataframe.sort_values(
-        by=key_name
-    ).reset_index(drop=True)
+    dataframe = dataframe.sort_values(by=id_name)
 
     dataframe.insert(
         0,
-        "customer_key",
+        key_name,
         range(1, len(dataframe) + 1),
     )
 

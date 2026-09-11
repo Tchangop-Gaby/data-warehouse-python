@@ -152,7 +152,10 @@ def transform_product(
 
     # Remove records without the keys required for validation and joins.
     prd_info = prd_info.dropna(subset=["prd_id"])
+    prd_info = prd_info.dropna(subset=["prd_key"])
     px_cat_g1v2 = px_cat_g1v2.dropna(subset=["id"])
+
+    prd_info = prd_info.drop_duplicates(subset=["prd_key"], keep="first")
 
     validate_unique_key(
         prd_info,
@@ -207,13 +210,13 @@ def transform_product(
     result = result.rename(
         columns={
             "prd_id": "product_id",
-            "prd_key": "product_key",
+            "prd_key": "product_code",
             "cat_key": "category_key",
             "prd_nm": "product_name",
             "prd_cost": "product_cost",
             "prd_line": "product_line",
-            "prd_start_dt": "product_start_date",
-            "prd_end_dt": "product_end_date",
+            "prd_start_dt": "start_date",
+            "prd_end_dt": "end_date",
             "cat": "category",
             "subcat": "subcategory",
         }

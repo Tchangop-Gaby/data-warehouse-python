@@ -23,7 +23,6 @@ import pandas as pd
 from sqlalchemy.engine import Engine
 
 FACT_COLUMNS = [
-    "sales_key",
     "order_number",
     "customer_key",
     "product_key",
@@ -46,6 +45,6 @@ def load_fact_sales(
         "fact_sales",
         engine,
         schema="warehouse",
-        if_exists="append",
+        if_exists="replace",
         index=False,
     )
