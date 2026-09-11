@@ -1,70 +1,110 @@
-import pandas as pd
+"""
+Data Warehouse Pipeline
+=======================
+
+Purpose:
+    Orchestrate the end-to-end ETL pipeline from raw CSV 
+    extraction through staging, transformation, quality 
+    validations, and warehouse loading.
+
+Description:
+    Coordinates each pipeline stage, tracks execution metrics, 
+    logs progress, and stops the pipeline when transformation 
+    quality checks fail.
+
+Components:
+    PipelineStatus:
+        Tracks pipeline execution and data quality metrics.
+    run_pipeline():
+        Executes the complete ETL workflow.
+    extraction_stage():
+        Loads and validates raw CSV files.
+    staging_loading_stage():
+        Loads extracted data into staging tables.
+    staging_extraction_stage():
+        Read data back from staging tables.
+    transformation_stage():
+        Transfors customer, product, and sales data.
+    quality_stage():
+        Runs transformation data quality checks.
+    dimension_stage():
+        Builds and loads warehouse dimensions.
+    fact_stage():
+        Builds and loads the sales fact table.
+    pipeline_summary():
+        Logs a summary of the pipeline execution.
+    
+Exceptions:
+    DataQualityError:
+        Raised when transformation quality checks fail.
+"""
+
 from time import perf_counter
 from dataclasses import dataclass
 from pathlib import Path
-from sqlalchemy.engine import Engine
 
-from .logger_config import (
-    pipeline_logger,
-    summary_logger,
-)
+import pandas as pd
+from sqlalchemy.engine import Engine
 
 from .config import (
     SOURCE_FILES,
     EXPECTED_COLUMNS,
 )
-
+from .database import create_db_engine
 from .extract.csv_loader import (
     load_csv,
     validate_columns,
 )
-from .extract.postgres import (
-    read_staging_table,
-)
-
-from .database import (
-    create_db_engine
-)
-
-from .transform.customer import transform_customer
-from .transform.product import transform_product
-from .transform.sales import (
-    transform_sales, 
-    prepare_fact_sales,
-)
-from .transform.common import add_surrogate_key
-from .transform.date import create_date_dimension
-
+from .extract.postgres import read_staging_table
 from .load.staging import (
     truncate_staging_table,
     load_dataframe_to_staging,
 )
 from .load.load_dimensions import (
-    load_dimension,
     COLUMNS,
+    load_dimension,
 )
 from .load.fact_sales import (
     load_fact_sales,
     FACT_COLUMNS,
 )
-
+from .logger_config import (
+    pipeline_logger,
+    summary_logger,
+)
 from .quality.checks import (
     validate_customers,
     validate_products,
     validate_sales,
 )
-
 from .quality.runner import (
     quality_gate_passed,
     print_quality_report,
     summary_quality,
 )
+from .transform.common import add_surrogate_key
+from .transform.customer import transform_customer
+from .transform.product import transform_product
+from .transform.date import create_date_dimension
+from .transform.sales import (
+    transform_sales, 
+    prepare_fact_sales,
+)
 
+# ===========================================================
+# Pipeline Configuration
+# ===========================================================
 db_engine = create_db_engine()
 
+# ===========================================================
+# Pipeline State and Exceptions
+# ===========================================================
 @dataclass
 class PipelineStatus:
-
+    """
+    Track pipeline execution, row counts, 
+    and quality check results.
+    """
     status: str = "STARTED"
 
     extracted_rows: int = 0
@@ -79,8 +119,19 @@ class PipelineStatus:
 
     duration: int = 0
 
-def run_pipeline():
+class DataQualityError(Exception):
+    """
+    Raised when data quality validation fails.
+    """
 
+# ===========================================================
+# Pipeline Orchestration
+# ===========================================================
+def run_pipeline():
+    """
+    Execute the complete data warehouse 
+    ETL pipeline.
+    """
     start = perf_counter()
 
     pipeline_logger.info("=" * 70)
@@ -112,9 +163,14 @@ def run_pipeline():
 
     pipeline_summary()
 
-
+# ===========================================================
+# 1. Extraction
+# ===========================================================
 def extraction_stage() -> dict:
-
+    """
+    Extract and validate all configured 
+    source CSV files.
+    """
     pipeline_logger.info("Staging extraction stage")
 
     results = {}
@@ -142,9 +198,14 @@ def extraction_stage() -> dict:
 
     return results
 
-
+# ===========================================================
+# 2. Staging Load
+# ===========================================================
 def staging_loading_stage(dict_of_data: dict, engine: Engine) -> None:
-
+    """
+    Truncate and load extracted datasets into
+    staging tables.
+    """
     pipeline_logger.info("Starting staging load")
 
     for table_name, data in dict_of_data.items():
@@ -164,8 +225,14 @@ def staging_loading_stage(dict_of_data: dict, engine: Engine) -> None:
 
     pipeline_logger.info("Staging load completed")
 
+# ===========================================================
+# 3. Staging Extraction
+# ===========================================================
 def staging_extraction_stage(engine) -> dict:
-
+    """
+    Read all configured datasets from the 
+    staging tables.
+    """
     pipeline_logger.info("Reading data from staging tables")
 
     dict_of_data = {}
@@ -180,8 +247,13 @@ def staging_extraction_stage(engine) -> dict:
 
     return dict_of_data
 
+# ===========================================================
+# 4. Transformation
+# ===========================================================
 def transformation_stage(data: dict) -> dict:
-
+    """
+    Tranform customer, product, and sales datasets
+    """
     pipeline_logger.info("Starting transformation stage")
 
     pipeline_logger.info(f"Transforming customers data")
@@ -210,8 +282,14 @@ def transformation_stage(data: dict) -> dict:
         "sales": sales_df,
     }
 
+# ===========================================================
+# 5. Data Quality
+# ===========================================================
 def quality_stage(transformed):
-
+    """
+    Run transformation quality checks and enforce 
+    the quality gate.
+    """
     pipeline_logger.info("Starting trasnformation quality checks")
 
     customer_results = validate_customers(transformed["customer"])
@@ -236,13 +314,13 @@ def quality_stage(transformed):
 
     pipeline_logger.info("All transformation quality checks passed")
 
-class DataQualityError(Exception):
-    """
-    Raised when data quality validation fails.
-    """
-
+# =======================================
+# 6. Dimension Loading
+# =======================================
 def dimension_stage(trasnformed: dict, engine: Engine) -> dict:
-
+    """
+    Build and load the customer, product, and date dimensions.
+    """
     pipeline_logger.info("Starting dimension loading")
 
     customer_df = add_surrogate_key(trasnformed["customer"], "customer_id", "customer_key")
@@ -264,12 +342,17 @@ def dimension_stage(trasnformed: dict, engine: Engine) -> dict:
         "date": date_df,
     }
 
+# =======================================
+# 7. Fact Loading
+# =======================================
 def fact_stage(
         sales_df: pd.DataFrame,
         dimensions: dict,
         engine: Engine,
 ) -> pd.DataFrame:
-
+    """
+    Prepare and load the sales fact dataset.
+    """
     pipeline_logger.info("Starting fact transformation")
 
     fact_df = prepare_fact_sales(
@@ -289,8 +372,14 @@ def fact_stage(
 
     return fact_df
 
+# =======================================
+# 8. Pipeline Summary
+# =======================================
 def pipeline_summary():
-
+    """
+    Log a summary of pipeline status, row counts, 
+    and execution time.
+    """
     summary_logger.info("=" * 70)
     summary_logger.info("PIPELINE SUMMARY")
     summary_logger.info("=" * 70)
@@ -320,7 +409,9 @@ def pipeline_summary():
 
     summary_logger.info("=" * 70)
 
-
+# =======================================
+# Script Entry Point
+# =======================================
 if __name__ == "__main__":
 
     try:
