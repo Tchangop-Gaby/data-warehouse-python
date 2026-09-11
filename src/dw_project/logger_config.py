@@ -40,7 +40,8 @@ def configure_logging():
         ),
         handlers=[
             logging.FileHandler(
-                "logs/pipeline.log"
+                "logs/pipeline.log",
+                mode="w"
             ),
             logging.StreamHandler(),
         ],
