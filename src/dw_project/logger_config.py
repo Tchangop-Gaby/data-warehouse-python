@@ -35,7 +35,7 @@ def configure_logging():
         format=(
             "%(asctime)s | "
             "%(levelname)s | "
-            "%(time)s | "
+            "%(name)s | "
             "%(message)s"
         ),
         handlers=[
