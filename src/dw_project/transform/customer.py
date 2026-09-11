@@ -131,6 +131,10 @@ def normalize_country(values: pd.Series) -> pd.Series:
         "GERMANY": "Germany",
         "US": "United States",
         "USA": "United States",
+        "AUSTRALIA": "Australia",
+        "CANADA": "Canada",
+        "FRANCE": "France",
+        "UNITED KINGDOM": "United Kingdom",
     }).fillna("Unknown")
 
 def transform_customer(
@@ -169,6 +173,11 @@ def transform_customer(
     cust_info = cust_info.dropna(subset=["cst_key"])
     cust_az12 = cust_az12.dropna(subset=["cid"])
     loc_a101 = loc_a101.dropna(subset=["cid"])
+
+    # Remove duplicated customer values
+    cust_info = cust_info.drop_duplicates(subset=["cst_key"], keep="first")
+    cust_az12 = cust_az12.drop_duplicates(subset=["cid"], keep="first")
+    loc_a101 = loc_a101.drop_duplicates(subset=["cid"], keep="first")
 
     # Validate source business keys before perofrming the joins.
     cust_az12, loc_a101 = reconcile_keys(

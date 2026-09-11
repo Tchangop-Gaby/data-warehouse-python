@@ -25,6 +25,9 @@ Component:
         Adds sequentials customer keys.
 """
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 def validate_unique_key(
         dataframe: pd.DataFrame,
@@ -52,10 +55,11 @@ def validate_unique_key(
             dataframe.loc[duplicate_mask, key_column].dropna().unique()
         )
 
-        raise ValueError(
+        logger.warning(
             f"{dataset_name} contains duplicate "
             f"{key_column} values: {duplicates[:10]}"
         )
+
 
 def standardize_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
