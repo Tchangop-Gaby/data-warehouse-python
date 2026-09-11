@@ -23,13 +23,15 @@ from .load.staging import (
 
 logger = logging.getLogger(__name__)
 
+db_engine = create_db_engine()
+
 def run_pipeline():
 
     logger.info("Pipeline started")
 
-    extraction_stage()
+    data = extraction_stage()
 
-    # staging_stage()
+    staging_stage(data, db_engine)
 
     # transformation_stage()
 
@@ -68,6 +70,27 @@ def extraction_stage() -> dict:
     logger.info("Extraction stage completed")
 
     return results
+
+
+def staging_stage(dict_of_data: dict, engine: Engine) -> None:
+
+    logger.info("Starting staging load")
+
+    for table_name, data in dict_of_data.items():
+
+        logger.info(f"Truncating {table_name}...")
+
+        truncate_staging_table(table_name, engine)
+
+        logger.info(f"Loading {table_name[4:]} into {table_name}...")
+
+        load_dataframe_to_staging(data.dataframe, table_name, engine)
+
+        logger.info(f"   Columns: {data.column_count}")
+        logger.info(f"   Rows: {data.row_count}")
+
+    logger.info("Staging load completed")
+
 
 def transformation_stage():
     ...
