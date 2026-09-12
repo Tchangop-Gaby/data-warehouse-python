@@ -187,6 +187,7 @@ def test_sales_date_sequence():
     )
 
     ship_and_due_result = check_date_sequence(
+        df,
         "ship_date",
         "due_date",
         "ship_and_due_date_sequence_valid"

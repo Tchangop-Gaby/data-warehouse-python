@@ -50,7 +50,7 @@ def test_product_transform():
     )
 
     assert len(result) == 1
-    assert result.iloc[0]["product_key"] == "FR-R92B-58"
+    assert result.iloc[0]["product_code"] == "FR-R92B-58"
     assert result.iloc[0]["category_key"] == "AC_BR"
     assert result.iloc[0]["product_line"] == "Road"
     assert result.iloc[0]["category"] == "Accessories"

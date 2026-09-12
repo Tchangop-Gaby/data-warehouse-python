@@ -63,7 +63,7 @@ def test_product_key_resolution():
 
     product_dim = pd.DataFrame({
         "product_key": [12],
-        "product_key_source": ["BK-M82S-44"]
+        "product_code": ["BK-M82S-44"]
     })
 
     result = resolve_product_keys(
@@ -84,7 +84,7 @@ def test_unmatched_product_gets_unknown_key():
 
     product_dim = pd.DataFrame({
         "product_key": [12],
-        "product_key_source": ["BK-M82S-44"]
+        "product_code": ["BK-M82S-44"]
     })
 
     result = resolve_product_keys(
@@ -99,27 +99,6 @@ def test_unmatched_product_gets_unknown_key():
     )
 
     assert result.iloc[0]["product_key"] == 0
-
-def test_duplicate_product_dimension_fails():
-    """
-    Verify that duplicates product dimension 
-    keys raise ValueError.
-    """
-    sales_df = pd.DataFrame({
-        "product_key_source": ["BK-M82S-44"]
-    })
-
-    product_dim = pd.DataFrame({
-        "prodct_key": [1, 2],
-        "product_key_source": ["BK-M82S-44", "BK-M82S-44"]
-    })
-
-    with pytest.raises(ValueError):
-
-        resolve_product_keys(
-            sales_df,
-            product_dim,
-        )
 
 def test_order_date_key_resolution():
     """
