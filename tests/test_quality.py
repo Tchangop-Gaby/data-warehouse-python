@@ -27,6 +27,7 @@ from dw_project.quality.checks import (
     check_non_negative,
     check_referential_integrity,
     check_row_count_reconciliation,
+    check_date_sequence,
 )
 from dw_project.quality.result import QualityStatus
 
@@ -166,3 +167,30 @@ def test_row_count_reconciliation_fails():
     )
 
     assert result.status == QualityStatus.FAIL
+
+def test_sales_date_sequence():
+    """
+    Verify that order, ship, and due date follows 
+    correct sequence
+    """
+    df = pd.DataFrame({
+        "order_date": [pd.Timestamp("2024-01-01")],
+        "ship_date": [pd.Timestamp("2024-01-03")],
+        "due_date": [pd.Timestamp("2024-01-05")],
+    })
+
+    order_and_ship_result = check_date_sequence(
+        df,
+        "order_date",
+        "ship_date",
+        "order_and_ship_date_sequence_valid"
+    )
+
+    ship_and_due_result = check_date_sequence(
+        "ship_date",
+        "due_date",
+        "ship_and_due_date_sequence_valid"
+    )
+
+    assert order_and_ship_result.status == QualityStatus.PASS
+    assert ship_and_due_result.status == QualityStatus.PASS
