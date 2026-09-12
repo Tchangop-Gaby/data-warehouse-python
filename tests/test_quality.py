@@ -24,6 +24,9 @@ import pandas as pd
 from dw_project.quality.checks import (
     check_not_null,
     check_unique,
+    check_non_negative,
+    check_referential_integrity,
+    check_row_count_reconciliation,
 )
 from dw_project.quality.result import QualityStatus
 
@@ -81,3 +84,85 @@ def test_unique_fails():
 
     assert result.status == QualityStatus.FAIL
     assert result.rows_affected == 2
+
+def test_sales_cannot_be_negative():
+    """
+    Verify that negative sales amounts fail 
+    the non-negative check.
+    """
+    df = pd.DataFrame({
+        "sales_amount": [100, 200, -50]
+    })
+
+    result = check_non_negative(
+        df,
+        "sales_amount",
+        "sales_amount_non_negative",
+    )
+
+    assert result.status == QualityStatus.FAIL
+
+def test_referential_integrity_fails():
+    """
+    Verify that invalid foreign keys cause 
+    referential integrity to fail.
+    """
+    fact = pd.DataFrame({
+        "customer_key": [1, 2 , 99]
+    })
+
+    customer_dim = pd.DataFrame({
+        "customer_key": [0, 1, 2]
+    })
+
+    result = check_referential_integrity(
+        fact,
+        "customer_key",
+        customer_dim,
+        "customer_key",
+        "fact_customer_fk_valid",
+    )
+
+    assert result.status == QualityStatus.FAIL
+
+def test_row_count_reconciliation_passes():
+    """
+    Verify that matching source and target row 
+    counts pass validation
+    """
+    source = pd.DataFrame({
+        "id": [1, 2, 3]
+    })
+
+    target = pd.DataFrame({
+        "id": [10, 20, 30]
+    })
+
+    result = check_row_count_reconciliation(
+        source,
+        target,
+        "sales_to_fact_row_count",
+    )
+
+    assert result.status == QualityStatus.PASS
+
+def test_row_count_reconciliation_fails():
+    """
+    Verify that different source and target row 
+    counts fail validation
+    """
+    source = pd.DataFrame({
+        "id": [1, 2, 3]
+    })
+
+    target = pd.DataFrame({
+        "id": [10, 20]
+    })
+
+    result = check_row_count_reconciliation(
+        source,
+        target,
+        "sales_to_fact_row_count",
+    )
+
+    assert result.status == QualityStatus.FAIL
