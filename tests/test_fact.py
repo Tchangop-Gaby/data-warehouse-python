@@ -22,10 +22,12 @@ Tests:
         key value of 0.
 """
 import pandas as pd
+import pytest
 
 from dw_project.transform.sales import (
     resolve_customer_keys,
     resolve_product_keys,
+    resolve_date_key,
 )
 
 def test_customer_key_resolution():
@@ -97,3 +99,47 @@ def test_unmatched_product_gets_unknown_key():
     )
 
     assert result.iloc[0]["product_key"] == 0
+
+def test_duplicate_product_dimension_fails():
+    """
+    Verify that duplicates product dimension 
+    keys raise ValueError.
+    """
+    sales_df = pd.DataFrame({
+        "product_key_source": ["BK-M82S-44"]
+    })
+
+    product_dim = pd.DataFrame({
+        "prodct_key": [1, 2],
+        "product_key_source": ["BK-M82S-44", "BK-M82S-44"]
+    })
+
+    with pytest.raises(ValueError):
+
+        resolve_product_keys(
+            sales_df,
+            product_dim,
+        )
+
+def test_order_date_key_resolution():
+    """
+    Verify that an order date resolves to 
+    the correct date key.
+    """
+    sales_df = pd.DataFrame({
+        "order_date": pd.to_datetime(["2024-01-15"])
+    })
+
+    date_dim = pd.DataFrame({
+        "date_key": [20240115],
+        "full_date": pd.to_datetime(["2024-01-15"])
+    })
+
+    result = resolve_date_key(
+        sales_df,
+        date_dim,
+        "order_date",
+        "order_date_key",
+    )
+
+    assert result.iloc[0]["order_date_key"] == 20240115
