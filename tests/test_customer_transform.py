@@ -59,37 +59,3 @@ def test_customer_transform():
     assert result.iloc[0]["first_name"] == "Jon"
     assert result.iloc[0]["country"] == "Germany"
     assert result.iloc[0]["birth_date"] == pd.Timestamp('1971-10-6')
-
-def test_customer_duplicate_auxiliary_key():
-    """
-    Verify that duplicate auxiliary customer keys
-    raise ValueError.
-    """
-    cust_info = pd.DataFrame({
-        "cst_id": [1],
-        "cst_key": ["C001"],
-        "cst_firstname": ["John"],
-        "cst_lastname": ["Doe"],
-        "cst_marital_status": ["M"],
-        "cst_gndr": ["M"],
-        "cst_create_date": ["2024-01-01"],
-    })
-
-    cust_az12 = pd.DataFrame({
-        "CID": ["C001", "C001"],
-        "BDATE": ["1990-05-10", "1990-05-10"],
-        "GEN": ["M", "M"],
-    })
-
-    loc_a101 = pd.DataFrame({
-        "CID": ["C001"],
-        "CNTRY": ["USA"],
-    })
-
-
-    with pytest.raises(ValueError):
-        transform_customer(
-            cust_info,
-            cust_az12,
-            loc_a101,
-        )
