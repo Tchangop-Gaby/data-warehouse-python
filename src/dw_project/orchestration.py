@@ -133,24 +133,25 @@ def run_pipeline():
     ETL pipeline.
     """
     start = perf_counter()
+    pipeline_status = PipelineStatus()
 
     pipeline_logger.info("=" * 70)
     pipeline_logger.info("DATA WAREHOUSE PIPELINE STARTED")
     pipeline_logger.info("=" * 70)
 
-    data = extraction_stage()
+    data = extraction_stage(pipeline_status)
 
-    staging_loading_stage(data, db_engine)
+    staging_loading_stage(data, db_engine, pipeline_status)
 
     raw = staging_extraction_stage(db_engine)
 
     transformed = transformation_stage(raw)
 
-    quality_stage(transformed)
+    quality_stage(transformed, pipeline_status)
 
-    dimensions = dimension_stage(transformed, db_engine)
+    dimensions = dimension_stage(transformed, db_engine, pipeline_status)
 
-    fact_stage(transformed["sales"], dimensions, engine=db_engine)
+    fact_stage(transformed["sales"], dimensions, db_engine, pipeline_status)
 
     pipeline_logger.info("=" * 70)
     pipeline_logger.info("DATA WAREHOUSE PIPELINE COMPLETED")
@@ -158,15 +159,15 @@ def run_pipeline():
 
     elapsed = perf_counter() - start
 
-    PipelineStatus.status = "SUCCESS"
-    PipelineStatus.duration = elapsed
+    pipeline_status.status = "SUCCESS"
+    pipeline_status.duration = elapsed
 
-    pipeline_summary()
+    pipeline_summary(pipeline_status)
 
 # ===========================================================
 # 1. Extraction
 # ===========================================================
-def extraction_stage() -> dict:
+def extraction_stage(pipeline_status: PipelineStatus) -> dict:
     """
     Extract and validate all configured 
     source CSV files.
@@ -192,7 +193,7 @@ def extraction_stage() -> dict:
 
         results[source_file.staging_table] = result
 
-        PipelineStatus.extracted_rows += result.row_count
+        pipeline_status.extracted_rows += result.row_count
 
     pipeline_logger.info("Extraction stage completed")
 
@@ -201,7 +202,7 @@ def extraction_stage() -> dict:
 # ===========================================================
 # 2. Staging Load
 # ===========================================================
-def staging_loading_stage(dict_of_data: dict, engine: Engine) -> None:
+def staging_loading_stage(dict_of_data: dict, engine: Engine, pipeline_status: PipelineStatus) -> None:
     """
     Truncate and load extracted datasets into
     staging tables.
@@ -221,7 +222,7 @@ def staging_loading_stage(dict_of_data: dict, engine: Engine) -> None:
         pipeline_logger.info(f"   Columns: {data.column_count}")
         pipeline_logger.info(f"   Rows: {data.row_count}")
 
-        PipelineStatus.staging_rows += data.row_count
+        pipeline_status.staging_rows += data.row_count
 
     pipeline_logger.info("Staging load completed")
 
@@ -285,7 +286,7 @@ def transformation_stage(data: dict) -> dict:
 # ===========================================================
 # 5. Data Quality
 # ===========================================================
-def quality_stage(transformed):
+def quality_stage(transformed, pipeline_status: PipelineStatus):
     """
     Run transformation quality checks and enforce 
     the quality gate.
@@ -308,16 +309,16 @@ def quality_stage(transformed):
 
         raise DataQualityError("Transformation quality checks failed")
 
-    PipelineStatus.total_quality_checks = summary_quality(all_results)["total_checks"]
-    PipelineStatus.quality_checks_passed = summary_quality(all_results)["passed"]
-    PipelineStatus.quality_checks_failed = summary_quality(all_results)["failed"]
+    pipeline_status.total_quality_checks = summary_quality(all_results)["total_checks"]
+    pipeline_status.quality_checks_passed = summary_quality(all_results)["passed"]
+    pipeline_status.quality_checks_failed = summary_quality(all_results)["failed"]
 
     pipeline_logger.info("All transformation quality checks passed")
 
 # =======================================
 # 6. Dimension Loading
 # =======================================
-def dimension_stage(trasnformed: dict, engine: Engine) -> dict:
+def dimension_stage(trasnformed: dict, engine: Engine, pipeline_status: PipelineStatus) -> dict:
     """
     Build and load the customer, product, and date dimensions.
     """
@@ -331,8 +332,8 @@ def dimension_stage(trasnformed: dict, engine: Engine) -> dict:
     load_dimension(product_df, "dim_product", COLUMNS["dim_product"], engine)
     load_dimension(date_df, "dim_date", COLUMNS["dim_date"], engine)
 
-    PipelineStatus.customer_rows = len(customer_df)
-    PipelineStatus.product_rows = len(product_df)
+    pipeline_status.customer_rows = len(customer_df)
+    pipeline_status.product_rows = len(product_df)
 
     pipeline_logger.info("Dimension loading completed")
 
@@ -349,6 +350,7 @@ def fact_stage(
         sales_df: pd.DataFrame,
         dimensions: dict,
         engine: Engine,
+        pipeline_status: PipelineStatus,
 ) -> pd.DataFrame:
     """
     Prepare and load the sales fact dataset.
@@ -366,7 +368,7 @@ def fact_stage(
 
     load_fact_sales(fact_df, engine)
 
-    PipelineStatus.fact_rows = len(fact_df)
+    pipeline_status.fact_rows = len(fact_df)
 
     pipeline_logger.info("Fact loading completed")
 
@@ -375,7 +377,7 @@ def fact_stage(
 # =======================================
 # 8. Pipeline Summary
 # =======================================
-def pipeline_summary():
+def pipeline_summary(pipeline_status: PipelineStatus):
     """
     Log a summary of pipeline status, row counts, 
     and execution time.
@@ -386,26 +388,26 @@ def pipeline_summary():
 
     summary_logger.info("")
 
-    summary_logger.info(f"Status: {PipelineStatus.status}")
+    summary_logger.info(f"Status: {pipeline_status.status}")
 
     summary_logger.info("")
 
-    summary_logger.info(f"Extraction rows:      {PipelineStatus.extracted_rows}")
-    summary_logger.info(f"Staging rows:         {PipelineStatus.staging_rows}")
-    summary_logger.info(f"Customer rows:        {PipelineStatus.customer_rows}")
-    summary_logger.info(f"Product rows:         {PipelineStatus.product_rows}")
-    summary_logger.info(f"Fact rows:            {PipelineStatus.fact_rows}")
+    summary_logger.info(f"Extraction rows:      {pipeline_status.extracted_rows}")
+    summary_logger.info(f"Staging rows:         {pipeline_status.staging_rows}")
+    summary_logger.info(f"Customer rows:        {pipeline_status.customer_rows}")
+    summary_logger.info(f"Product rows:         {pipeline_status.product_rows}")
+    summary_logger.info(f"Fact rows:            {pipeline_status.fact_rows}")
 
     summary_logger.info("")
 
     summary_logger.info("Quality checks:")
-    summary_logger.info(f"  Checks:   {PipelineStatus.total_quality_checks}")
-    summary_logger.info(f"  Passed:   {PipelineStatus.quality_checks_passed}")
-    summary_logger.info(f"  Failed:   {PipelineStatus.quality_checks_failed}")
+    summary_logger.info(f"  Checks:   {pipeline_status.total_quality_checks}")
+    summary_logger.info(f"  Passed:   {pipeline_status.quality_checks_passed}")
+    summary_logger.info(f"  Failed:   {pipeline_status.quality_checks_failed}")
 
     summary_logger.info("")
 
-    summary_logger.info(f"Duration: {PipelineStatus.duration} seconds")
+    summary_logger.info(f"Duration: {pipeline_status.duration} seconds")
 
     summary_logger.info("=" * 70)
 
