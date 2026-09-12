@@ -11,15 +11,6 @@ Description:
     Tests successful customer and product key resolution, 
     as well as the handling of unmatched product keys 
     using the unknown-member key.
-
-Tests:
-    test_customer_key_resolution():
-        Verifies customer IDs resolve correctly.
-    test_product_key_resolution():
-        Verifies product keys resolve correctly.
-    test_unmatched_product_gets_unknown_key():
-        Verifies unmatched products receive the unknown 
-        key value of 0.
 """
 import pandas as pd
 import pytest

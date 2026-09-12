@@ -10,14 +10,6 @@ Description:
     Tests successful and failed not-null checks
     and verifies that duplicate values are correctly
     detected by the uniqueness check.
-
-    Tests:
-        test_not_null_passes():
-            Verifies that a column without null values passes.
-        test_not_null_fails():
-            Verifies that null values cause a check fail.
-        test_unique_fails():
-            Verifies that duplicate values cause a check to fail.
 """
 import pandas as pd
 

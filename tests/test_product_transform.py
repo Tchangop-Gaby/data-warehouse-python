@@ -10,11 +10,6 @@ Description:
     Tests the successful transformation of product information
     and its associated category data into the final product 
     dimension structure.
-
-Tests:
-    test_product_transform():
-        Verifies successful product transformation and category
-        enrichment
 """
 import pandas as pd
 

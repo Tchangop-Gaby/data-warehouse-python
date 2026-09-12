@@ -10,10 +10,6 @@ Description:
     Tests the successful transformation of sales data 
     into the final sales fact table structure, 
     including field renaming and value types
-
-Tests:
-    test_sales_transform():
-        Verifies successful sales transformation.
 """
 import pandas as pd
 

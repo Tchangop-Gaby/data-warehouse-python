@@ -10,16 +10,6 @@ Description:
     Tests successful CSV loading, handling of missing
     files, and validation of expected DataFrame
     columns.
-
-Tests:
-    test_load_csv():
-        Verifies successful CSV loading and metadata extraction.
-    test_load_csv_missing_file():
-        Verifies missing files raise an error.
-    test_validate_column_success():
-        Verifies valid columns pass validation.
-    test_validate_columns_missing_column():
-        Verifies missing columns raise an error.
 """
 from pathlib import Path
 import pandas as pd

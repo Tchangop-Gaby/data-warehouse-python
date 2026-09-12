@@ -6,14 +6,7 @@ Purpose:
     Verify the customer transformation and validation logic.
 
 Description:
-    Tests successful customer data transformation and verifies 
-    that duplicate auxiliary customer keys are rejected.
-
-Tests:
-    test_customer_transform():
-        Verifies successful customer transformation.
-    test_customer_duplicate_auxiliary_key():
-        Verifies duplicate aixiliary keys raise a validation error.
+    Tests successful customer data transformation.
 """
 import pandas as pd
 import pytest
