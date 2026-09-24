@@ -324,10 +324,12 @@ def dimension_stage(trasnformed: dict, engine: Engine, pipeline_status: Pipeline
     """
     pipeline_logger.info("Starting dimension loading")
 
+    pipeline_logger.info("Adding Surrogate Keys")
     customer_df = add_surrogate_key(trasnformed["customer"], "customer_id", "customer_key")
     product_df = add_surrogate_key(trasnformed["product"], "product_id", "product_key")
     date_df = create_date_dimension(trasnformed["sales"])
 
+    pipeline_logger.info("Loading...")
     load_dimension(customer_df, "dim_customer", COLUMNS["dim_customer"], engine)
     load_dimension(product_df, "dim_product", COLUMNS["dim_product"], engine)
     load_dimension(date_df, "dim_date", COLUMNS["dim_date"], engine)

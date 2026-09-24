@@ -79,6 +79,6 @@ def load_dimension(
         table_name,
         engine,
         schema="warehouse",
-        if_exists="replace",
+        if_exists="delete",
         index=False,
     )
