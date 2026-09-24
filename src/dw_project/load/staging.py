@@ -82,7 +82,7 @@ def load_dataframe_to_staging(
         ValueError: If the table is not an allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        pipeline_logger(f"Invalid staging table: {table_name}")
+        pipeline_logger.exception(f"Invalid staging table: {table_name}")
         raise
     
     rows_loaded = len(df)
@@ -121,7 +121,7 @@ def get_staging_row_count(
             ValueError: If the table is not allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        pipeline_logger(f"Invalid staging table: {table_name}")
+        pipeline_logger.exception(f"Invalid staging table: {table_name}")
 
     query = text(f"SELECT COUNT(*) FROM staging.{table_name}")
 

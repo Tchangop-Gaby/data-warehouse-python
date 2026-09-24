@@ -53,7 +53,7 @@ def read_staging_table(
             If the table is not an allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        pipeline_logger(f"Invalid staging table: {table_name}")
+        pipeline_logger.exception(f"Invalid staging table: {table_name}")
         raise
 
     query = text(f"SELECT * FROM staging.{table_name}")

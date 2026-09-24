@@ -49,11 +49,11 @@ def load_csv(file_path: Path) -> ExtractionResult:
             If the file s not a CSV.
     """
     if not file_path.exists():
-        pipeline_logger(f"Source file not found: {file_path}")
+        pipeline_logger.exception(f"Source file not found: {file_path}")
         raise
 
     if file_path.suffix.lower() != ".csv":
-        pipeline_logger(f"Expected a CSV file received: {file_path}")
+        pipeline_logger.exception(f"Expected a CSV file received: {file_path}")
         raise
 
     df = pd.read_csv(file_path)
@@ -84,7 +84,7 @@ def validate_columns(df: pd.DataFrame, expected_columns: list[str]) -> None:
         unexpected_columns = [column for column in actual_columns if column not in expected_columns]
 
         if missing_columns:
-             raise ValueError(f"Missing columns: {missing_columns}")
+            pipeline_logger.exception(f"Missing columns: {missing_columns}")
 
         if unexpected_columns:
-             raise ValueError(f"Unexpected columns: {unexpected_columns}")
+            pipeline_logger.exception(f"Unexpected columns: {unexpected_columns}")
