@@ -102,8 +102,9 @@ data-warehouse-python
 6. Configure a Postgres Server, and create a database.
 6. Configure .env.example
 7. Run the sql scripts in PostgreSQL.
-7. Run: `python -m main.py`
-8. Run: `python -m pytest`
+8. Run: `pip install -e .`
+9. Run: `python -m main.py`
+10. Run: `python -m pytest`
 
 
 ## 📑 Design Decision
