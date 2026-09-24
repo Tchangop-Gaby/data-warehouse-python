@@ -178,7 +178,7 @@ def extraction_stage(pipeline_status: PipelineStatus) -> dict:
 
     for source_file in SOURCE_FILES:
 
-        file_path = Path("data\\raw", source_file.source_system, source_file.filename)
+        file_path = Path("data\\", source_file.source_system, source_file.filename)
 
         pipeline_logger.info(f"Extracting data from {file_path}")
 
