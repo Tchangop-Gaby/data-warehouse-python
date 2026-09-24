@@ -92,7 +92,7 @@ def load_dataframe_to_staging(
         name=table_name,
         con=engine,
         schema="staging",
-        if_exists="delete",
+        if_exists="delete_rows",
         index=False,
         chunksize=5000,
         method="multi"

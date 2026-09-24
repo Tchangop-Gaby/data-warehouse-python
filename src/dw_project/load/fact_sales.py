@@ -45,6 +45,6 @@ def load_fact_sales(
         "fact_sales",
         engine,
         schema="warehouse",
-        if_exists="delete",
+        if_exists="delete_rows",
         index=False,
     )
