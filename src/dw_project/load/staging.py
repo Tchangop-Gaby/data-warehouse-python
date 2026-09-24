@@ -52,7 +52,7 @@ def truncate_staging_table(
         ValueError: If the table is not an allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        raise ValueError(f"Invalid staging table: {table_name}")
+        pipeline_logger.exception(f"Invalid staging table: {table_name}")
 
     query = text(f"TRUNCATE TABLE staging.{table_name}")
 
@@ -83,7 +83,6 @@ def load_dataframe_to_staging(
     """
     if table_name not in ALLOWED_STAGING_TABLES:
         pipeline_logger.exception(f"Invalid staging table: {table_name}")
-        raise
     
     rows_loaded = len(df)
 

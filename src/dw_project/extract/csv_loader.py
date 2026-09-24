@@ -50,11 +50,9 @@ def load_csv(file_path: Path) -> ExtractionResult:
     """
     if not file_path.exists():
         pipeline_logger.exception(f"Source file not found: {file_path}")
-        raise
 
     if file_path.suffix.lower() != ".csv":
         pipeline_logger.exception(f"Expected a CSV file received: {file_path}")
-        raise
 
     df = pd.read_csv(file_path)
 
