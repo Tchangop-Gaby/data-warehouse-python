@@ -24,6 +24,8 @@ Components:
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
+from dw_project.logger_config import pipeline_logger
+
 
 # Restrict database operations to known staging tables.
 ALLOWED_STAGING_TABLES = {
@@ -80,7 +82,8 @@ def load_dataframe_to_staging(
         ValueError: If the table is not an allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        raise ValueError(f"Invalid staging table: {table_name}")
+        pipeline_logger(f"Invalid staging table: {table_name}")
+        raise
     
     rows_loaded = len(df)
 
@@ -118,7 +121,7 @@ def get_staging_row_count(
             ValueError: If the table is not allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        raise ValueError(f"Invalid staging table: {table_name}")
+        pipeline_logger(f"Invalid staging table: {table_name}")
 
     query = text(f"SELECT COUNT(*) FROM staging.{table_name}")
 

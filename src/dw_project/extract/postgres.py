@@ -19,6 +19,8 @@ Components:
 import pandas as pd
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
+from dw_project.logger_config import pipeline_logger
+
 
 # Restrict database queries to known staging tables
 ALLOWED_STAGING_TABLES = {
@@ -51,7 +53,8 @@ def read_staging_table(
             If the table is not an allowed staging table.
     """
     if table_name not in ALLOWED_STAGING_TABLES:
-        raise ValueError(f"Invalid staging table: {table_name}")
+        pipeline_logger(f"Invalid staging table: {table_name}")
+        raise
 
     query = text(f"SELECT * FROM staging.{table_name}")
 

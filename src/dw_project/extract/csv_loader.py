@@ -20,6 +20,7 @@ Components:
 """
 from pathlib import Path
 from dataclasses import dataclass
+from dw_project.logger_config import pipeline_logger
 
 import pandas as pd
 
@@ -48,10 +49,12 @@ def load_csv(file_path: Path) -> ExtractionResult:
             If the file s not a CSV.
     """
     if not file_path.exists():
-        raise FileNotFoundError(f"Source file not found: {file_path}")
+        pipeline_logger(f"Source file not found: {file_path}")
+        raise
 
     if file_path.suffix.lower() != ".csv":
-        raise ValueError(f"Expected a CSV file received: {file_path}")
+        pipeline_logger(f"Expected a CSV file received: {file_path}")
+        raise
 
     df = pd.read_csv(file_path)
 
