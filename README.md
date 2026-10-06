@@ -95,7 +95,7 @@ data-warehouse-python
 
 ## 🛠 How to Run
 1. `git clone <repository>`
-2. `cd data_warehouse_python`
+2. `cd data-warehouse-python`
 3. Create environment: `python -m venv .venv`
 4. Activate it: `.venv\Scripts\activate`
 5. Install dependencies: `pip install -r requirements.txt`
